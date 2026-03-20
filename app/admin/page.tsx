@@ -2,16 +2,6 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { Lock, LogOut, Plus, Save, Trash2, Upload } from "lucide-react";
 import { AdminQueryCleaner } from "@/app/admin/_components/admin-query-cleaner";
-
-import {
-  createMerilProductAction,
-  createMedicineAction,
-  deleteMerilProductAction,
-  deleteMedicineAction,
-  deleteMedicineImageAction,
-  updateMerilProductAction,
-  updateMedicineAction,
-} from "@/app/admin/actions";
 import { getAllMerilProducts } from "@/lib/meril";
 import { getAllMedicines } from "@/lib/medicines";
 
@@ -171,7 +161,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
       <section className="info-card">
         <h2>Add New Medicine</h2>
-        <form action={createMedicineAction} className="admin-grid-form">
+        <form action="/admin/mutate" method="post" className="admin-grid-form">
+          <input type="hidden" name="op" value="create-medicine" />
           <label>
             Code
             <input name="code" required />
@@ -213,7 +204,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               <h3>
                 {medicine.genericName} <span className="pill">Code: {medicine.code}</span>
               </h3>
-              <form action={deleteMedicineAction}>
+              <form action="/admin/mutate" method="post">
+                <input type="hidden" name="op" value="delete-medicine" />
                 <input type="hidden" name="id" value={medicine.id} />
                 <button type="submit" className="btn btn-secondary">
                   <Trash2 size={16} /> Delete
@@ -221,7 +213,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               </form>
             </div>
 
-            <form action={updateMedicineAction} className="admin-grid-form">
+            <form action="/admin/mutate" method="post" className="admin-grid-form">
+              <input type="hidden" name="op" value="update-medicine" />
               <input type="hidden" name="id" value={medicine.id} />
               <label>
                 Code
@@ -306,7 +299,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   medicine.imageItems.map((image, index) => (
                     <div key={image.id} className="admin-image-item">
                       <img src={image.path} alt={`${medicine.genericName} ${index + 1}`} />
-                      <form action={deleteMedicineImageAction}>
+                      <form action="/admin/mutate" method="post">
+                        <input type="hidden" name="op" value="delete-image" />
                         <input type="hidden" name="image_id" value={image.id} />
                         <input type="hidden" name="image_path" value={image.path} />
                         <button type="submit" className="btn btn-secondary">
@@ -324,7 +318,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
       <section className="info-card">
         <h2>Add New Meril Fully Automatic Product</h2>
-        <form action={createMerilProductAction} className="admin-grid-form">
+        <form action="/admin/mutate" method="post" className="admin-grid-form">
+          <input type="hidden" name="op" value="create-meril" />
           <label>
             Sr. No
             <input name="sr_no" type="number" min={1} step={1} required />
@@ -366,7 +361,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               <h3>
                 {item.productName} <span className="pill">SR: {item.srNo}</span>
               </h3>
-              <form action={deleteMerilProductAction}>
+              <form action="/admin/mutate" method="post">
+                <input type="hidden" name="op" value="delete-meril" />
                 <input type="hidden" name="id" value={item.id} />
                 <button type="submit" className="btn btn-secondary">
                   <Trash2 size={16} /> Delete
@@ -374,7 +370,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               </form>
             </div>
 
-            <form action={updateMerilProductAction} className="admin-grid-form">
+            <form action="/admin/mutate" method="post" className="admin-grid-form">
+              <input type="hidden" name="op" value="update-meril" />
               <input type="hidden" name="id" value={item.id} />
               <label>
                 Sr. No
