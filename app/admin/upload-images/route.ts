@@ -21,7 +21,8 @@ function sanitizeExtension(fileName: string) {
 
 function createRedirectUrl(path: string, requestUrl: string) {
   try {
-    return new URL(path, requestUrl).toString();
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? requestUrl;
+    return new URL(path, baseUrl).toString();
   } catch {
     return path;
   }

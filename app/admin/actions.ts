@@ -28,6 +28,16 @@ function toText(value: FormDataEntryValue | null) {
   return String(value ?? "").trim();
 }
 
+function getRedirectUrl(path: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  if (baseUrl) {
+    // Remove trailing slash if present
+    const base = baseUrl.replace(/\/$/, "");
+    return `${base}${path}`;
+  }
+  return path;
+}
+
 export async function createMedicineAction(formData: FormData) {
   let status = "ok";
   try {
@@ -58,7 +68,7 @@ export async function createMedicineAction(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/shop");
-  redirect(`/admin?action=create-medicine&status=${status}`);
+  redirect(getRedirectUrl(`/admin?action=create-medicine&status=${status}`));
 }
 
 export async function updateMedicineAction(formData: FormData) {
@@ -93,7 +103,7 @@ export async function updateMedicineAction(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/shop");
-  redirect(`/admin?action=update-medicine&status=${status}`);
+  redirect(getRedirectUrl(`/admin?action=update-medicine&status=${status}`));
 }
 
 export async function deleteMedicineAction(formData: FormData) {
@@ -117,7 +127,7 @@ export async function deleteMedicineAction(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/shop");
-  redirect(`/admin?action=delete-medicine&status=${status}`);
+  redirect(getRedirectUrl(`/admin?action=delete-medicine&status=${status}`));
 }
 
 export async function deleteMedicineImageAction(formData: FormData) {
@@ -143,7 +153,7 @@ export async function deleteMedicineImageAction(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/shop");
-  redirect(`/admin?action=delete-image&status=${status}`);
+  redirect(getRedirectUrl(`/admin?action=delete-image&status=${status}`));
 }
 
 export async function createMerilProductAction(formData: FormData) {
@@ -176,7 +186,7 @@ export async function createMerilProductAction(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/shop");
-  redirect(`/admin?action=create-meril&status=${status}`);
+  redirect(getRedirectUrl(`/admin?action=create-meril&status=${status}`));
 }
 
 export async function updateMerilProductAction(formData: FormData) {
@@ -211,7 +221,7 @@ export async function updateMerilProductAction(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/shop");
-  redirect(`/admin?action=update-meril&status=${status}`);
+  redirect(getRedirectUrl(`/admin?action=update-meril&status=${status}`));
 }
 
 export async function deleteMerilProductAction(formData: FormData) {
@@ -233,5 +243,5 @@ export async function deleteMerilProductAction(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/shop");
-  redirect(`/admin?action=delete-meril&status=${status}`);
+  redirect(getRedirectUrl(`/admin?action=delete-meril&status=${status}`));
 }

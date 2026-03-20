@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ slug: string[] }> }
+  { params }: { params: Promise<{ slug?: string[] }> }
 ) {
   try {
     const slugParams = await params;
