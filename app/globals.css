@@ -375,6 +375,20 @@ a {
   gap: 1rem;
 }
 
+.home-banner {
+  padding-top: 1rem;
+  padding-bottom: 0.25rem;
+}
+
+.home-banner__image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(19, 32, 27, 0.08);
+  box-shadow: var(--shadow-soft);
+}
+
 .category-card,
 .product-card {
   background: var(--surface);
@@ -494,8 +508,9 @@ a {
 .db-medicine-image {
   width: 100%;
   height: 250px;
-  object-fit: cover;
-  object-position: top center;
+  object-fit: contain;
+  object-position: center;
+  background: #fff;
   border-radius: 12px;
   border: 1px solid rgba(19, 32, 27, 0.1);
   margin: 0.55rem 0;

@@ -18,6 +18,17 @@ export default async function Home() {
 
   return (
     <div className="landing-page">
+      <section className="container section home-banner">
+        <picture>
+          <source media="(max-width: 768px)" srcSet="/tirupati-banner-mobile.png" />
+          <img
+            src="/tirupati-medix-banner-desktop.webp"
+            alt="Tirupati Medix Banner"
+            className="home-banner__image"
+          />
+        </picture>
+      </section>
+
       <section className="hero container">
         <div className="hero__content">
           <p className="hero__eyebrow">Ostomy Care and Diagnostic Catalog</p>
