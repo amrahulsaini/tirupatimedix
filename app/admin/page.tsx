@@ -54,6 +54,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 <Lock size={16} /> ADMIN_PASSWORD is missing in `.env.local`.
               </p>
             ) : null}
+            {params.error === "server" ? (
+              <p className="admin-error">
+                <Lock size={16} /> Server error during login. Restart server and re-check env values.
+              </p>
+            ) : null}
             <button type="submit" className="btn btn-primary">
               <Lock size={16} /> Login
             </button>
@@ -63,14 +68,22 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     );
   }
 
-  const [medicinesResult, merilResult] = await Promise.allSettled([
-    getAllMedicines(),
-    getAllMerilProducts(),
-  ]);
+  let medicines = [] as Awaited<ReturnType<typeof getAllMedicines>>;
+  let merilProducts = [] as Awaited<ReturnType<typeof getAllMerilProducts>>;
+  let dataLoadFailed = false;
 
-  const medicines = medicinesResult.status === "fulfilled" ? medicinesResult.value : [];
-  const merilProducts = merilResult.status === "fulfilled" ? merilResult.value : [];
-  const dataLoadFailed = medicinesResult.status === "rejected" || merilResult.status === "rejected";
+  try {
+    const [medicinesResult, merilResult] = await Promise.allSettled([
+      getAllMedicines(),
+      getAllMerilProducts(),
+    ]);
+
+    medicines = medicinesResult.status === "fulfilled" ? medicinesResult.value : [];
+    merilProducts = merilResult.status === "fulfilled" ? merilResult.value : [];
+    dataLoadFailed = medicinesResult.status === "rejected" || merilResult.status === "rejected";
+  } catch {
+    dataLoadFailed = true;
+  }
 
   return (
     <div className="content-page container admin-shell">

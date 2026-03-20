@@ -34,27 +34,31 @@ function sanitizeFileName(originalName: string) {
 }
 
 export async function loginAdminAction(formData: FormData) {
-  const password = toText(formData.get("password"));
-  const adminPassword = process.env.ADMIN_PASSWORD;
+  try {
+    const password = toText(formData.get("password"));
+    const adminPassword = process.env.ADMIN_PASSWORD;
 
-  if (!adminPassword) {
-    redirect("/admin?error=config");
+    if (!adminPassword) {
+      redirect("/admin?error=config");
+    }
+
+    if (password !== adminPassword) {
+      redirect("/admin?error=invalid");
+    }
+
+    const cookieStore = await cookies();
+    cookieStore.set(ADMIN_COOKIE, "1", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 12,
+      path: "/",
+    });
+
+    redirect("/admin");
+  } catch {
+    redirect("/admin?error=server");
   }
-
-  if (password !== adminPassword) {
-    redirect("/admin?error=invalid");
-  }
-
-  const cookieStore = await cookies();
-  cookieStore.set(ADMIN_COOKIE, "1", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 12,
-    path: "/",
-  });
-
-  redirect("/admin");
 }
 
 export async function logoutAdminAction() {
