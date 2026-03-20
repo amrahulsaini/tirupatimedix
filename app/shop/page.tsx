@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { SectionTitle } from "@/app/_components/section-title";
 import { getAllMerilProducts } from "@/lib/meril";
@@ -11,10 +12,30 @@ export const metadata: Metadata = {
   description: "Browse all available medicines and wellness products at Tirupati Medix.",
 };
 
-export default async function ShopPage() {
+type ShopPageProps = {
+  searchParams: Promise<{ category?: string }>;
+};
+
+export default async function ShopPage({ searchParams }: ShopPageProps) {
+  const params = await searchParams;
+  const selectedCategory = (params.category ?? "").trim();
+
   const medicines = await getAllMedicines().catch(() => []);
-  const categories = [...new Set(medicines.map((item) => item.category))];
   const merilProducts = await getAllMerilProducts().catch(() => []);
+  const allCategories = [
+    ...new Set([...medicines.map((item) => item.category), ...merilProducts.map((item) => item.category)]),
+  ];
+
+  const filteredMedicines = selectedCategory
+    ? medicines.filter((item) => item.category === selectedCategory)
+    : medicines;
+
+  const filteredMeril = selectedCategory
+    ? merilProducts.filter((item) => item.category === selectedCategory)
+    : merilProducts;
+
+  const filteredMedicineCategories = [...new Set(filteredMedicines.map((item) => item.category))];
+  const totalFiltered = filteredMedicines.length + filteredMeril.length;
 
   return (
     <div className="content-page container">
@@ -26,16 +47,34 @@ export default async function ShopPage() {
         </p>
       </div>
 
-      {medicines.length === 0 ? (
+      <section className="section filter-bar">
+        <p>Filter By Category</p>
+        <div className="filter-chips">
+          <Link href="/shop" className={`filter-chip ${selectedCategory ? "" : "filter-chip--active"}`}>
+            All Categories
+          </Link>
+          {allCategories.map((category) => (
+            <Link
+              key={category}
+              href={{ pathname: "/shop", query: { category } }}
+              className={`filter-chip ${selectedCategory === category ? "filter-chip--active" : ""}`}
+            >
+              {category}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {totalFiltered === 0 ? (
         <section className="section info-card">
-          <h2>No medicines found</h2>
+          <h2>No products found for this category</h2>
           <p className="muted">
-            Add products from `/admin` and ensure DB variables in `.env.local` are configured.
+            Try a different filter or add products from `/admin`.
           </p>
         </section>
       ) : (
-        categories.map((category) => {
-          const categoryItems = medicines.filter((item) => item.category === category);
+        filteredMedicineCategories.map((category) => {
+          const categoryItems = filteredMedicines.filter((item) => item.category === category);
 
           return (
             <section className="section" key={category}>
@@ -69,15 +108,15 @@ export default async function ShopPage() {
         })
       )}
 
-      {merilProducts.length > 0 ? (
+      {filteredMeril.length > 0 ? (
         <section className="section">
           <SectionTitle
             eyebrow="Special Catalog"
             title="Meril Fully Automatic"
-            subtitle={`${merilProducts.length} products available`}
+            subtitle={`${filteredMeril.length} products available`}
           />
           <div className="product-grid">
-            {merilProducts.map((item) => (
+            {filteredMeril.map((item) => (
               <article key={item.id} className="product-card meril-card">
                 <h3>{item.productName}</h3>
                 <p className="muted">Pack Size: {item.packSize}</p>
