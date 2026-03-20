@@ -27,14 +27,16 @@ export function SiteHeader() {
       </div>
       <div className="container nav-shell">
         <Link href="/" className="brand" onClick={() => setIsOpen(false)}>
-          <Image
-            src="/tirupati-medix-logo.webp"
-            alt="Tirupati Medix"
-            width={104}
-            height={60}
-            sizes="(max-width: 720px) 82px, 104px"
-            priority
-          />
+          <span className="brand-mark">
+            <Image
+              src="/tirupati-medix-logo.webp"
+              alt="Tirupati Medix"
+              width={116}
+              height={64}
+              sizes="(max-width: 720px) 92px, 116px"
+              priority
+            />
+          </span>
           <span>
             <strong>Tirupati Medix</strong>
             <small>tirupatimedix.com</small>
