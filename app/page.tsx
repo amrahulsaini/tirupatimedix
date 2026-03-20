@@ -18,7 +18,15 @@ export default async function Home() {
 
   return (
     <div className="landing-page">
-      <section className="container section home-banner">
+      <section className="home-top-banner" aria-label="Shipping and delivery highlights">
+        <div className="home-top-banner__inner">
+          <span>Free Shipping above Rs. 400</span>
+          <span>Delivery in 4 to 5 days</span>
+          <span>Secure packaging and genuine products</span>
+        </div>
+      </section>
+
+      <section className="home-banner-full">
         <picture>
           <source media="(max-width: 768px)" srcSet="/tirupati-banner-mobile.png" />
           <img
