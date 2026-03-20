@@ -8,8 +8,6 @@ import {
   deleteMerilProductAction,
   deleteMedicineAction,
   deleteMedicineImageAction,
-  loginAdminAction,
-  logoutAdminAction,
   updateMerilProductAction,
   updateMedicineAction,
   uploadMedicineImagesAction,
@@ -39,7 +37,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         <section className="info-card admin-login-card">
           <h1>Admin Login</h1>
           <p className="muted">Enter your admin password to manage medicines and images.</p>
-          <form action={loginAdminAction} className="list-reset admin-form">
+          <form action="/admin/login" method="post" className="list-reset admin-form">
             <label>
               Password
               <input type="password" name="password" placeholder="Enter admin password" required />
@@ -97,7 +95,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             </p>
           ) : null}
         </div>
-        <form action={logoutAdminAction}>
+        <form action="/admin/logout" method="post">
           <button type="submit" className="btn btn-secondary">
             <LogOut size={16} /> Logout
           </button>

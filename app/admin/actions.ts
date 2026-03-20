@@ -5,7 +5,6 @@ import path from "node:path";
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 import { dbQuery, ensureDatabaseSchema } from "@/lib/db";
 
@@ -31,36 +30,6 @@ function toText(value: FormDataEntryValue | null) {
 function sanitizeFileName(originalName: string) {
   const base = originalName.replace(/[^a-zA-Z0-9._-]/g, "-");
   return base.length > 0 ? base : `image-${Date.now()}.jpg`;
-}
-
-export async function loginAdminAction(formData: FormData) {
-  const password = toText(formData.get("password"));
-  const adminPassword = process.env.ADMIN_PASSWORD;
-
-  if (!adminPassword) {
-    redirect("/admin?error=config");
-  }
-
-  if (password !== adminPassword) {
-    redirect("/admin?error=invalid");
-  }
-
-  const cookieStore = await cookies();
-  cookieStore.set(ADMIN_COOKIE, "1", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 12,
-    path: "/",
-  });
-
-  redirect("/admin");
-}
-
-export async function logoutAdminAction() {
-  const cookieStore = await cookies();
-  cookieStore.delete(ADMIN_COOKIE);
-  redirect("/admin");
 }
 
 export async function createMedicineAction(formData: FormData) {
