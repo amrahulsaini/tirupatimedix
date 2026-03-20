@@ -30,8 +30,9 @@ export function SiteHeader() {
           <Image
             src="/tirupati-medix-logo.webp"
             alt="Tirupati Medix"
-            width={140}
-            height={56}
+            width={84}
+            height={84}
+            sizes="(max-width: 720px) 68px, 84px"
             priority
           />
           <span>
