@@ -91,7 +91,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           <p className="muted">Manage categories, medicine details, prices, and multiple images.</p>
           {dataLoadFailed ? (
             <p className="admin-error">
-              <Lock size={16} /> DB load failed. Check table names, DB credentials, and schema SQL.
+              <Lock size={16} /> Catalog data is temporarily unavailable. Please verify settings and try again.
             </p>
           ) : null}
         </div>

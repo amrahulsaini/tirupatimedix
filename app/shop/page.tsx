@@ -42,8 +42,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
       <div className="content-hero">
         <h1>Shop Medicines</h1>
         <p>
-          Explore medicines directly from your MySQL catalog with category-based listing,
-          medicine code, and live pricing from your database.
+          Explore carefully organized medical catalogs with category-wise listing,
+          product code visibility, and transparent pricing.
         </p>
       </div>
 
@@ -68,9 +68,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
       {totalFiltered === 0 ? (
         <section className="section info-card">
           <h2>No products found for this category</h2>
-          <p className="muted">
-            Try a different filter or add products from `/admin`.
-          </p>
+          <p className="muted">Try a different filter or check back shortly.</p>
         </section>
       ) : (
         filteredMedicineCategories.map((category) => {

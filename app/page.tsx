@@ -21,10 +21,10 @@ export default async function Home() {
       <section className="hero container">
         <div className="hero__content">
           <p className="hero__eyebrow">Ostomy Care and Diagnostic Catalog</p>
-          <h1>Medical products managed directly from your live database.</h1>
+          <h1>Trusted medical products curated for hospitals, clinics, and patient care.</h1>
           <p>
-            Tirupati Medix showcases Hollister and Meril Fully Automatic products with real pricing
-            and categories from your MySQL tables.
+            Tirupati Medix brings Hollister and Meril Fully Automatic ranges together with
+            transparent pricing and organized categories.
           </p>
           <div className="hero__cta">
             <Link href="/shop" className="btn btn-primary">
@@ -50,7 +50,7 @@ export default async function Home() {
           <h3>Why teams trust Tirupati Medix</h3>
           <ul>
             <li>
-              <CheckCheck size={18} /> Live database-driven catalog for real product management.
+              <CheckCheck size={18} /> Professionally managed product catalog with consistent updates.
             </li>
             <li>
               <CheckCheck size={18} /> Admin updates instantly reflected on storefront pages.
@@ -66,18 +66,18 @@ export default async function Home() {
       <section className="container section">
         <SectionTitle
           eyebrow="Ostomy Care Categories"
-          title="Live Categories From Database"
+          title="Specialized Categories"
           subtitle="Both primary catalogs are included in one managed storefront flow."
         />
         <div className="category-grid">
           <article className="category-card">
             <h3>Hollister</h3>
-            <p>{medicines.length} products available in Hollister table.</p>
+            <p>{medicines.length} products currently available.</p>
             <Link href="/shop">Explore</Link>
           </article>
           <article className="category-card">
             <h3>Meril Fully Automatic</h3>
-            <p>{merilProducts.length} products available in Meril table.</p>
+            <p>{merilProducts.length} products currently available.</p>
             <Link href="/shop">Explore</Link>
           </article>
           <article className="category-card">
@@ -92,7 +92,7 @@ export default async function Home() {
         <SectionTitle
           eyebrow="Hollister"
           title="Hollister Product Highlights"
-          subtitle="Code and generic name with cut price and MRP from live table."
+          subtitle="Code and generic name with best price and MRP details."
         />
         <div className="product-grid">
           {topHollister.map((item) => (
@@ -138,16 +138,16 @@ export default async function Home() {
 
       {totalProducts === 0 ? (
         <section className="container section info-card">
-          <h2>No products found in database</h2>
-          <p className="muted">Please run your SQL inserts and refresh the homepage.</p>
+          <h2>No products available right now</h2>
+          <p className="muted">Please add catalog items from the admin panel and refresh.</p>
         </section>
       ) : null}
 
       <section className="container section promo-strip">
         <div>
           <BadgePercent size={20} />
-          <h3>Live database catalog enabled</h3>
-          <p>Manage both Hollister and Meril products from admin and show instantly on storefront.</p>
+          <h3>Unified professional catalog</h3>
+          <p>Manage both Hollister and Meril ranges from one streamlined admin workflow.</p>
         </div>
         <Link className="btn btn-primary" href="/admin">
           Manage Catalog
