@@ -1,9 +1,23 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 const ADMIN_COOKIE = "medix_admin_session";
 
+function createRedirectUrl(path: string, requestUrl: string) {
+  try {
+    return new URL(path, requestUrl).toString();
+  } catch {
+    return path;
+  }
+}
+
 export async function POST(request: Request) {
-  const response = NextResponse.redirect(new URL("/admin", request.url), { status: 303 });
-  response.cookies.delete(ADMIN_COOKIE);
-  return response;
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete(ADMIN_COOKIE);
+    return NextResponse.redirect(createRedirectUrl("/admin", request.url), { status: 303 });
+  } catch (error) {
+    console.error("Logout Error:", error);
+    return NextResponse.redirect(createRedirectUrl("/admin", request.url), { status: 303 });
+  }
 }
