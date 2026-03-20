@@ -5,6 +5,7 @@ import path from "node:path";
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 import { dbQuery, ensureDatabaseSchema } from "@/lib/db";
 
@@ -32,74 +33,110 @@ function sanitizeFileName(originalName: string) {
   return base.length > 0 ? base : `image-${Date.now()}.jpg`;
 }
 
-export async function createMedicineAction(formData: FormData) {
-  await requireAdminSession();
-  await ensureDatabaseSchema();
-
-  const code = toText(formData.get("code"));
-  const category = toText(formData.get("category"));
-  const genericName = toText(formData.get("generic_name"));
-  const packingPerBox = toNumber(formData.get("packing_per_box"));
-  const dpUnits = toNumber(formData.get("dp_units"));
-  const mrpUnits = toNumber(formData.get("mrp_units"));
-  const cutPrice = toNumber(formData.get("cut_price"));
-
-  if (!code || !category || !genericName) {
-    throw new Error("Code, category, and generic name are required.");
-  }
-
-  await dbQuery(
-    `INSERT INTO hollister (code, category, generic_name, packing_per_box, dp_units, mrp_units, cut_price)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [code, category, genericName, packingPerBox, dpUnits, mrpUnits, cutPrice]
+function isNextRedirectError(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "digest" in error &&
+    typeof (error as { digest?: unknown }).digest === "string" &&
+    (error as { digest: string }).digest.startsWith("NEXT_REDIRECT")
   );
+}
 
-  revalidatePath("/admin");
-  revalidatePath("/shop");
+export async function createMedicineAction(formData: FormData) {
+  try {
+    await requireAdminSession();
+    await ensureDatabaseSchema();
+
+    const code = toText(formData.get("code"));
+    const category = toText(formData.get("category"));
+    const genericName = toText(formData.get("generic_name"));
+    const packingPerBox = toNumber(formData.get("packing_per_box"));
+    const dpUnits = toNumber(formData.get("dp_units"));
+    const mrpUnits = toNumber(formData.get("mrp_units"));
+    const cutPrice = toNumber(formData.get("cut_price"));
+
+    if (!code || !category || !genericName) {
+      redirect("/admin?action=create-medicine&status=invalid");
+    }
+
+    await dbQuery(
+      `INSERT INTO hollister (code, category, generic_name, packing_per_box, dp_units, mrp_units, cut_price)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [code, category, genericName, packingPerBox, dpUnits, mrpUnits, cutPrice]
+    );
+
+    revalidatePath("/admin");
+    revalidatePath("/shop");
+    redirect("/admin?action=create-medicine&status=ok");
+  } catch (error) {
+    if (isNextRedirectError(error)) {
+      throw error;
+    }
+    redirect("/admin?action=create-medicine&status=error");
+  }
 }
 
 export async function updateMedicineAction(formData: FormData) {
-  await requireAdminSession();
+  try {
+    await requireAdminSession();
+    await ensureDatabaseSchema();
 
-  const id = toNumber(formData.get("id"));
-  const code = toText(formData.get("code"));
-  const category = toText(formData.get("category"));
-  const genericName = toText(formData.get("generic_name"));
-  const packingPerBox = toNumber(formData.get("packing_per_box"));
-  const dpUnits = toNumber(formData.get("dp_units"));
-  const mrpUnits = toNumber(formData.get("mrp_units"));
-  const cutPrice = toNumber(formData.get("cut_price"));
+    const id = toNumber(formData.get("id"));
+    const code = toText(formData.get("code"));
+    const category = toText(formData.get("category"));
+    const genericName = toText(formData.get("generic_name"));
+    const packingPerBox = toNumber(formData.get("packing_per_box"));
+    const dpUnits = toNumber(formData.get("dp_units"));
+    const mrpUnits = toNumber(formData.get("mrp_units"));
+    const cutPrice = toNumber(formData.get("cut_price"));
 
-  if (!id) {
-    throw new Error("Medicine id is required.");
+    if (!id || !code || !category || !genericName) {
+      redirect("/admin?action=update-medicine&status=invalid");
+    }
+
+    await dbQuery(
+      `UPDATE hollister
+       SET code = ?, category = ?, generic_name = ?, packing_per_box = ?, dp_units = ?, mrp_units = ?, cut_price = ?
+       WHERE id = ?`,
+      [code, category, genericName, packingPerBox, dpUnits, mrpUnits, cutPrice, id]
+    );
+
+    revalidatePath("/admin");
+    revalidatePath("/shop");
+    redirect("/admin?action=update-medicine&status=ok");
+  } catch (error) {
+    if (isNextRedirectError(error)) {
+      throw error;
+    }
+    redirect("/admin?action=update-medicine&status=error");
   }
-
-  await dbQuery(
-    `UPDATE hollister
-     SET code = ?, category = ?, generic_name = ?, packing_per_box = ?, dp_units = ?, mrp_units = ?, cut_price = ?
-     WHERE id = ?`,
-    [code, category, genericName, packingPerBox, dpUnits, mrpUnits, cutPrice, id]
-  );
-
-  revalidatePath("/admin");
-  revalidatePath("/shop");
 }
 
 export async function deleteMedicineAction(formData: FormData) {
-  await requireAdminSession();
+  try {
+    await requireAdminSession();
+    await ensureDatabaseSchema();
 
-  const id = toNumber(formData.get("id"));
-  if (!id) {
-    throw new Error("Medicine id is required.");
+    const id = toNumber(formData.get("id"));
+    if (!id) {
+      redirect("/admin?action=delete-medicine&status=invalid");
+    }
+
+    await dbQuery(`DELETE FROM hollister WHERE id = ?`, [id]);
+
+    const medicineDir = path.join(process.cwd(), "public", "uploads", "medicines", String(id));
+    await rm(medicineDir, { recursive: true, force: true });
+
+    revalidatePath("/admin");
+    revalidatePath("/shop");
+    redirect("/admin?action=delete-medicine&status=ok");
+  } catch (error) {
+    if (isNextRedirectError(error)) {
+      throw error;
+    }
+    redirect("/admin?action=delete-medicine&status=error");
   }
-
-  await dbQuery(`DELETE FROM hollister WHERE id = ?`, [id]);
-
-  const medicineDir = path.join(process.cwd(), "public", "uploads", "medicines", String(id));
-  await rm(medicineDir, { recursive: true, force: true });
-
-  revalidatePath("/admin");
-  revalidatePath("/shop");
 }
 
 export async function uploadMedicineImagesAction(formData: FormData) {
@@ -149,89 +186,124 @@ export async function uploadMedicineImagesAction(formData: FormData) {
 }
 
 export async function deleteMedicineImageAction(formData: FormData) {
-  await requireAdminSession();
+  try {
+    await requireAdminSession();
+    await ensureDatabaseSchema();
 
-  const imageId = toNumber(formData.get("image_id"));
-  const imagePath = toText(formData.get("image_path"));
+    const imageId = toNumber(formData.get("image_id"));
+    const imagePath = toText(formData.get("image_path"));
 
-  if (!imageId || !imagePath) {
-    throw new Error("Image id and path are required.");
+    if (!imageId || !imagePath) {
+      redirect("/admin?action=delete-image&status=invalid");
+    }
+
+    await dbQuery(`DELETE FROM medicine_images WHERE id = ?`, [imageId]);
+
+    const diskPath = path.join(process.cwd(), "public", imagePath.replace(/^\//, ""));
+    await unlink(diskPath).catch(() => {
+      // Ignore file deletion errors if file was already removed.
+    });
+
+    revalidatePath("/admin");
+    revalidatePath("/shop");
+    redirect("/admin?action=delete-image&status=ok");
+  } catch (error) {
+    if (isNextRedirectError(error)) {
+      throw error;
+    }
+    redirect("/admin?action=delete-image&status=error");
   }
-
-  await dbQuery(`DELETE FROM medicine_images WHERE id = ?`, [imageId]);
-
-  const diskPath = path.join(process.cwd(), "public", imagePath.replace(/^\//, ""));
-  await unlink(diskPath).catch(() => {
-    // Ignore file deletion errors if file was already removed.
-  });
-
-  revalidatePath("/admin");
-  revalidatePath("/shop");
 }
 
 export async function createMerilProductAction(formData: FormData) {
-  await requireAdminSession();
-  await ensureDatabaseSchema();
+  try {
+    await requireAdminSession();
+    await ensureDatabaseSchema();
 
-  const srNo = toNumber(formData.get("sr_no"));
-  const category = toText(formData.get("category"));
-  const productName = toText(formData.get("product_name"));
-  const packSize = toText(formData.get("pack_size"));
-  const mrpUnits = toNumber(formData.get("mrp_units"));
-  const cutPrice = toNumber(formData.get("cut_price"));
-  const gst = toText(formData.get("gst"));
+    const srNo = toNumber(formData.get("sr_no"));
+    const category = toText(formData.get("category"));
+    const productName = toText(formData.get("product_name"));
+    const packSize = toText(formData.get("pack_size"));
+    const mrpUnits = toNumber(formData.get("mrp_units"));
+    const cutPrice = toNumber(formData.get("cut_price"));
+    const gst = toText(formData.get("gst"));
 
-  if (!srNo || !category || !productName || !packSize || !gst) {
-    throw new Error("All Meril product fields are required.");
+    if (!srNo || !category || !productName || !packSize || !gst) {
+      redirect("/admin?action=create-meril&status=invalid");
+    }
+
+    await dbQuery(
+      `INSERT INTO meril_fully_automatic (sr_no, category, product_name, pack_size, mrp_units, cut_price, gst)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [srNo, category, productName, packSize, mrpUnits, cutPrice, gst]
+    );
+
+    revalidatePath("/admin");
+    revalidatePath("/shop");
+    redirect("/admin?action=create-meril&status=ok");
+  } catch (error) {
+    if (isNextRedirectError(error)) {
+      throw error;
+    }
+    redirect("/admin?action=create-meril&status=error");
   }
-
-  await dbQuery(
-    `INSERT INTO meril_fully_automatic (sr_no, category, product_name, pack_size, mrp_units, cut_price, gst)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [srNo, category, productName, packSize, mrpUnits, cutPrice, gst]
-  );
-
-  revalidatePath("/admin");
-  revalidatePath("/shop");
 }
 
 export async function updateMerilProductAction(formData: FormData) {
-  await requireAdminSession();
+  try {
+    await requireAdminSession();
+    await ensureDatabaseSchema();
 
-  const id = toNumber(formData.get("id"));
-  const srNo = toNumber(formData.get("sr_no"));
-  const category = toText(formData.get("category"));
-  const productName = toText(formData.get("product_name"));
-  const packSize = toText(formData.get("pack_size"));
-  const mrpUnits = toNumber(formData.get("mrp_units"));
-  const cutPrice = toNumber(formData.get("cut_price"));
-  const gst = toText(formData.get("gst"));
+    const id = toNumber(formData.get("id"));
+    const srNo = toNumber(formData.get("sr_no"));
+    const category = toText(formData.get("category"));
+    const productName = toText(formData.get("product_name"));
+    const packSize = toText(formData.get("pack_size"));
+    const mrpUnits = toNumber(formData.get("mrp_units"));
+    const cutPrice = toNumber(formData.get("cut_price"));
+    const gst = toText(formData.get("gst"));
 
-  if (!id) {
-    throw new Error("Meril product id is required.");
+    if (!id || !srNo || !category || !productName || !packSize || !gst) {
+      redirect("/admin?action=update-meril&status=invalid");
+    }
+
+    await dbQuery(
+      `UPDATE meril_fully_automatic
+       SET sr_no = ?, category = ?, product_name = ?, pack_size = ?, mrp_units = ?, cut_price = ?, gst = ?
+       WHERE id = ?`,
+      [srNo, category, productName, packSize, mrpUnits, cutPrice, gst, id]
+    );
+
+    revalidatePath("/admin");
+    revalidatePath("/shop");
+    redirect("/admin?action=update-meril&status=ok");
+  } catch (error) {
+    if (isNextRedirectError(error)) {
+      throw error;
+    }
+    redirect("/admin?action=update-meril&status=error");
   }
-
-  await dbQuery(
-    `UPDATE meril_fully_automatic
-     SET sr_no = ?, category = ?, product_name = ?, pack_size = ?, mrp_units = ?, cut_price = ?, gst = ?
-     WHERE id = ?`,
-    [srNo, category, productName, packSize, mrpUnits, cutPrice, gst, id]
-  );
-
-  revalidatePath("/admin");
-  revalidatePath("/shop");
 }
 
 export async function deleteMerilProductAction(formData: FormData) {
-  await requireAdminSession();
+  try {
+    await requireAdminSession();
+    await ensureDatabaseSchema();
 
-  const id = toNumber(formData.get("id"));
-  if (!id) {
-    throw new Error("Meril product id is required.");
+    const id = toNumber(formData.get("id"));
+    if (!id) {
+      redirect("/admin?action=delete-meril&status=invalid");
+    }
+
+    await dbQuery(`DELETE FROM meril_fully_automatic WHERE id = ?`, [id]);
+
+    revalidatePath("/admin");
+    revalidatePath("/shop");
+    redirect("/admin?action=delete-meril&status=ok");
+  } catch (error) {
+    if (isNextRedirectError(error)) {
+      throw error;
+    }
+    redirect("/admin?action=delete-meril&status=error");
   }
-
-  await dbQuery(`DELETE FROM meril_fully_automatic WHERE id = ?`, [id]);
-
-  revalidatePath("/admin");
-  revalidatePath("/shop");
 }

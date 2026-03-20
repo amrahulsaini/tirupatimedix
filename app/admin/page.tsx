@@ -22,11 +22,41 @@ export const metadata: Metadata = {
 };
 
 type AdminPageProps = {
-  searchParams: Promise<{ error?: string; upload?: string }>;
+  searchParams: Promise<{ error?: string; upload?: string; action?: string; status?: string }>;
 };
+
+function getAdminActionMessage(action?: string, status?: string) {
+  if (!action || !status) {
+    return null;
+  }
+
+  const labels: Record<string, string> = {
+    "create-medicine": "Medicine added",
+    "update-medicine": "Medicine updated",
+    "delete-medicine": "Medicine deleted",
+    "delete-image": "Image removed",
+    "create-meril": "Meril product added",
+    "update-meril": "Meril product updated",
+    "delete-meril": "Meril product deleted",
+  };
+
+  const label = labels[action] ?? "Action";
+  if (status === "ok") {
+    return { kind: "success" as const, text: `${label} successfully.` };
+  }
+  if (status === "invalid") {
+    return { kind: "error" as const, text: `${label} failed. Please check required fields.` };
+  }
+  if (status === "error") {
+    return { kind: "error" as const, text: `${label} failed due to server/database error.` };
+  }
+
+  return null;
+}
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
   const params = await searchParams;
+  const actionMessage = getAdminActionMessage(params.action, params.status);
   const cookieStore = await cookies();
   const isLoggedIn = cookieStore.get("medix_admin_session")?.value === "1";
 
@@ -116,6 +146,16 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           {params.upload === "server" ? (
             <p className="admin-error">
               <Upload size={16} /> Upload failed due to server error. Please try again.
+            </p>
+          ) : null}
+          {actionMessage?.kind === "success" ? (
+            <p className="admin-success">
+              <Save size={16} /> {actionMessage.text}
+            </p>
+          ) : null}
+          {actionMessage?.kind === "error" ? (
+            <p className="admin-error">
+              <Lock size={16} /> {actionMessage.text}
             </p>
           ) : null}
         </div>
