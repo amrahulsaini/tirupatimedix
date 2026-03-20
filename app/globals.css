@@ -68,40 +68,48 @@ a {
   background: linear-gradient(90deg, #0f4f3a, #166249);
   color: #f3fff8;
   border-bottom: 1px solid rgba(9, 43, 31, 0.35);
-  overflow: hidden;
+  overflow: clip;
 }
 
-.top-strip__ticker-wrap {
-  height: 34px;
-  overflow: hidden;
+.top-strip__rotator {
+  height: 36px;
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-.top-strip__ticker-track {
-  display: flex;
-  width: max-content;
-  gap: 1.1rem;
-  animation: ticker-scroll 20s linear infinite;
-  will-change: transform;
+.top-strip__rotator-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .top-strip__item {
-  display: inline-flex;
+  position: absolute;
+  inset: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
+  margin: auto;
+  width: fit-content;
+  max-width: calc(100% - 1.2rem);
   border-radius: 999px;
-  padding: 0.34rem 0.75rem;
+  padding: 0.32rem 0.78rem;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.01em;
   white-space: nowrap;
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
   background: rgba(255, 255, 255, 0.1);
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: background 0.2s ease;
+  animation: announcement-cycle calc(var(--announcement-count) * 3.8s) ease-in-out infinite;
+  animation-delay: calc(var(--announcement-index) * 3.8s);
 }
 
 .top-strip__item:hover {
-  transform: translateY(-1px);
   background: rgba(255, 255, 255, 0.2);
 }
 
@@ -235,40 +243,6 @@ a {
 .landing-page {
   padding: 0 0 4rem;
   animation: reveal 0.6s ease both;
-}
-
-.home-top-banner {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  background: linear-gradient(90deg, #0f4f3a, #166249);
-  color: #f3fff8;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-  border-bottom: 1px solid rgba(9, 43, 31, 0.35);
-}
-
-.home-top-banner__inner {
-  width: min(1280px, 100%);
-  margin-inline: auto;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.65rem;
-  padding: 0.52rem 0.95rem;
-}
-
-.home-top-banner__inner span {
-  text-align: center;
-  font-size: 0.84rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  border-radius: 999px;
-  padding: 0.34rem 0.55rem;
-  background: rgba(255, 255, 255, 0.08);
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.home-top-banner__inner span:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.16);
 }
 
 .hero {
@@ -432,8 +406,10 @@ a {
 
 .home-banner__image {
   width: 100%;
-  height: auto;
+  height: clamp(180px, 28vw, 360px);
   display: block;
+  object-fit: cover;
+  object-position: center;
   border-radius: 0;
 }
 
@@ -450,6 +426,7 @@ a {
 
 .product-card {
   min-height: 430px;
+  overflow: hidden;
 }
 
 .category-card:hover,
@@ -562,6 +539,14 @@ a {
   border-radius: 12px;
   border: 1px solid rgba(19, 32, 27, 0.1);
   margin: 0.55rem 0;
+  transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.2, 1), box-shadow 0.3s ease, filter 0.3s ease;
+  transform-origin: center;
+}
+
+.product-card:hover .db-medicine-image {
+  transform: scale(1.06) translateY(-2px);
+  filter: saturate(1.08) contrast(1.02);
+  box-shadow: 0 16px 26px rgba(16, 55, 41, 0.16);
 }
 
 .btn {
@@ -1001,17 +986,16 @@ textarea:focus {
     display: block;
   }
 
-  .top-strip__ticker-wrap {
+  .top-strip__rotator {
     height: 30px;
-  }
-
-  .top-strip__ticker-track {
-    animation-duration: 16s;
   }
 
   .top-strip__item {
     font-size: 0.76rem;
-    padding: 0.28rem 0.58rem;
+    max-width: calc(100% - 0.75rem);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 0.25rem 0.55rem;
   }
 
   .nav-shell {
@@ -1068,13 +1052,55 @@ textarea:focus {
   }
 }
 
-@keyframes ticker-scroll {
+@keyframes announcement-cycle {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  8% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  23% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  31% {
+    opacity: 0;
+    transform: translateY(-8px) scale(1.01);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(1.01);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .section,
+  .product-card,
+  .category-card,
+  .promo-strip {
+    animation-name: fade-up-on-scroll;
+    animation-duration: 1ms;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 15% cover 35%;
+  }
+}
+
+@keyframes fade-up-on-scroll {
   from {
-    transform: translateX(0);
+    opacity: 0;
+    transform: translateY(18px);
   }
 
   to {
-    transform: translateX(-50%);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

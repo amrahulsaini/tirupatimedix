@@ -13,22 +13,33 @@ const navLinks = [
   { href: "/faq", label: "FAQ" },
 ];
 
+const announcements = [
+  "Free Shipping above Rs. 400",
+  "Delivery in 4 to 5 days",
+  "100% genuine medical products",
+  "Need help? Talk to a pharmacist at Contact",
+];
+
 export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <header className="site-header">
       <div className="top-strip" aria-label="Announcements">
-        <div className="container top-strip__ticker-wrap">
-          <div className="top-strip__ticker-track">
-            <span className="top-strip__item">Free Shipping above Rs. 400</span>
-            <span className="top-strip__item">Delivery in 4 to 5 days</span>
-            <span className="top-strip__item">100% genuine medical products</span>
-            <span className="top-strip__item">Need help? Talk to a pharmacist at Contact</span>
-            <span className="top-strip__item">Free Shipping above Rs. 400</span>
-            <span className="top-strip__item">Delivery in 4 to 5 days</span>
-            <span className="top-strip__item">100% genuine medical products</span>
-            <span className="top-strip__item">Need help? Talk to a pharmacist at Contact</span>
+        <div className="container top-strip__rotator">
+          <div className="top-strip__rotator-track">
+            {announcements.map((message, index) => (
+              <span
+                key={message}
+                className="top-strip__item"
+                style={{
+                  ["--announcement-index" as string]: index,
+                  ["--announcement-count" as string]: announcements.length,
+                }}
+              >
+                {message}
+              </span>
+            ))}
           </div>
         </div>
       </div>
