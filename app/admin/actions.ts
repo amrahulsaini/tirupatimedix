@@ -38,7 +38,7 @@ export async function loginAdminAction(formData: FormData) {
   const adminPassword = process.env.ADMIN_PASSWORD;
 
   if (!adminPassword) {
-    throw new Error("ADMIN_PASSWORD is not configured in .env.local");
+    redirect("/admin?error=config");
   }
 
   if (password !== adminPassword) {

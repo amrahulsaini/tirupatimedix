@@ -79,10 +79,6 @@ export default async function ShopPage() {
           <div className="product-grid">
             {merilProducts.map((item) => (
               <article key={item.id} className="product-card meril-card">
-                <div className="product-card__badge-row">
-                  <span className="pill">SR: {item.srNo}</span>
-                  <span className="stock stock--ok">GST {item.gst}</span>
-                </div>
                 <h3>{item.productName}</h3>
                 <p className="muted">Pack Size: {item.packSize}</p>
                 <p className="muted">Category: {item.category}</p>

@@ -1,30 +1,37 @@
 import Link from "next/link";
 import { Ambulance, BadgePercent, CheckCheck, ShieldCheck, Truck } from "lucide-react";
 
-import { ProductCard } from "@/app/_components/product-card";
 import { SectionTitle } from "@/app/_components/section-title";
-import { categories, featuredSlugs, products, storeAddress } from "@/app/_data/products";
+import { storeAddress } from "@/app/_data/products";
+import { getAllMerilProducts } from "@/lib/meril";
+import { getAllMedicines } from "@/lib/medicines";
 
-export default function Home() {
-  const featuredSet = new Set<string>(featuredSlugs);
-  const featuredProducts = products.filter((product) => featuredSet.has(product.slug));
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const medicines = await getAllMedicines().catch(() => []);
+  const merilProducts = await getAllMerilProducts().catch(() => []);
+
+  const topHollister = medicines.slice(0, 6);
+  const topMeril = merilProducts.slice(0, 6);
+  const totalProducts = medicines.length + merilProducts.length;
 
   return (
     <div className="landing-page">
       <section className="hero container">
         <div className="hero__content">
-          <p className="hero__eyebrow">India Trusted Medicine Marketplace</p>
-          <h1>Healthcare essentials delivered with pharmacy-grade trust.</h1>
+          <p className="hero__eyebrow">Ostomy Care and Diagnostic Catalog</p>
+          <h1>Medical products managed directly from your live database.</h1>
           <p>
-            Tirupati Medix brings authentic medicines, wellness products, and verified care from
-            licensed suppliers directly to your doorstep.
+            Tirupati Medix showcases Hollister and Meril Fully Automatic products with real pricing
+            and categories from your MySQL tables.
           </p>
           <div className="hero__cta">
             <Link href="/shop" className="btn btn-primary">
-              Shop Medicines
+              Shop Catalog
             </Link>
             <Link href="/contact" className="btn btn-secondary">
-              Upload Prescription
+              Contact Support
             </Link>
           </div>
           <div className="hero__stats">
@@ -32,7 +39,7 @@ export default function Home() {
               <ShieldCheck size={16} /> 100% Genuine Products
             </span>
             <span>
-              <Truck size={16} /> Same Day Dispatch
+              <Truck size={16} /> {totalProducts} Products Listed
             </span>
             <span>
               <Ambulance size={16} /> Emergency Support Line
@@ -40,16 +47,16 @@ export default function Home() {
           </div>
         </div>
         <div className="hero__panel">
-          <h3>Why families trust Tirupati Medix</h3>
+          <h3>Why teams trust Tirupati Medix</h3>
           <ul>
             <li>
-              <CheckCheck size={18} /> Quality-checked inventory from approved distributors.
+              <CheckCheck size={18} /> Live database-driven catalog for real product management.
             </li>
             <li>
-              <CheckCheck size={18} /> Temperature-safe storage and handling process.
+              <CheckCheck size={18} /> Admin updates instantly reflected on storefront pages.
             </li>
             <li>
-              <CheckCheck size={18} /> Dedicated support for repeat and chronic prescriptions.
+              <CheckCheck size={18} /> Structured product pricing with MRP and final cut price.
             </li>
           </ul>
           <p>{storeAddress}</p>
@@ -58,16 +65,51 @@ export default function Home() {
 
       <section className="container section">
         <SectionTitle
-          eyebrow="Shop by Category"
-          title="Everything Your Health Journey Needs"
-          subtitle="From everyday wellness to long-term care, curated by our pharmacy experts."
+          eyebrow="Ostomy Care Categories"
+          title="Live Categories From Database"
+          subtitle="Both primary catalogs are included in one managed storefront flow."
         />
         <div className="category-grid">
-          {categories.map((category) => (
-            <article key={category.name} className="category-card">
-              <h3>{category.name}</h3>
-              <p>{category.description}</p>
-              <Link href="/shop">Explore</Link>
+          <article className="category-card">
+            <h3>Hollister</h3>
+            <p>{medicines.length} products available in Hollister table.</p>
+            <Link href="/shop">Explore</Link>
+          </article>
+          <article className="category-card">
+            <h3>Meril Fully Automatic</h3>
+            <p>{merilProducts.length} products available in Meril table.</p>
+            <Link href="/shop">Explore</Link>
+          </article>
+          <article className="category-card">
+            <h3>Unified Ostomy Care View</h3>
+            <p>Single storefront view with MRP strike-through and final cut price.</p>
+            <Link href="/shop">Open Catalog</Link>
+          </article>
+        </div>
+      </section>
+
+      <section className="container section">
+        <SectionTitle
+          eyebrow="Hollister"
+          title="Hollister Product Highlights"
+          subtitle="Code and generic name with cut price and MRP from live table."
+        />
+        <div className="product-grid">
+          {topHollister.map((item) => (
+            <article key={item.id} className="product-card">
+              <div className="product-card__badge-row">
+                <span className="pill">Code: {item.code}</span>
+                <span className="stock stock--ok">Pack: {item.packingPerBox}</span>
+              </div>
+              {item.images[0] ? (
+                <img src={item.images[0]} alt={item.genericName} className="db-medicine-image" />
+              ) : null}
+              <h3>{item.genericName}</h3>
+              <div className="price-row">
+                <strong>Rs. {item.cutPrice.toFixed(2)}</strong>
+                <span>Rs. {item.mrpUnits.toFixed(2)}</span>
+                <em>Best Price</em>
+              </div>
             </article>
           ))}
         </div>
@@ -75,25 +117,40 @@ export default function Home() {
 
       <section className="container section">
         <SectionTitle
-          eyebrow="Featured Medicines"
-          title="Popular Choices at Better Value"
-          subtitle="Verified brands, transparent pricing, and quick doorstep delivery."
+          eyebrow="Meril"
+          title="Meril Fully Automatic Highlights"
+          subtitle="Product name and pack size with final cut pricing."
         />
         <div className="product-grid">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {topMeril.map((item) => (
+            <article key={item.id} className="product-card meril-card">
+              <h3>{item.productName}</h3>
+              <p className="muted">Pack Size: {item.packSize}</p>
+              <div className="price-row">
+                <strong>Rs. {item.cutPrice.toFixed(2)}</strong>
+                <span>Rs. {item.mrpUnits.toFixed(2)}</span>
+                <em>Best Price</em>
+              </div>
+            </article>
           ))}
         </div>
       </section>
 
+      {totalProducts === 0 ? (
+        <section className="container section info-card">
+          <h2>No products found in database</h2>
+          <p className="muted">Please run your SQL inserts and refresh the homepage.</p>
+        </section>
+      ) : null}
+
       <section className="container section promo-strip">
         <div>
           <BadgePercent size={20} />
-          <h3>Save up to 22% on monthly essentials</h3>
-          <p>Setup recurring orders for diabetes, cardiac, and vitamin medicines.</p>
+          <h3>Live database catalog enabled</h3>
+          <p>Manage both Hollister and Meril products from admin and show instantly on storefront.</p>
         </div>
-        <Link className="btn btn-primary" href="/checkout">
-          Start Subscription
+        <Link className="btn btn-primary" href="/admin">
+          Manage Catalog
         </Link>
       </section>
     </div>

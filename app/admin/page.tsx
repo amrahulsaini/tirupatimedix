@@ -49,6 +49,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 <Lock size={16} /> Invalid password. Please try again.
               </p>
             ) : null}
+            {params.error === "config" ? (
+              <p className="admin-error">
+                <Lock size={16} /> ADMIN_PASSWORD is missing in `.env.local`.
+              </p>
+            ) : null}
             <button type="submit" className="btn btn-primary">
               <Lock size={16} /> Login
             </button>
@@ -58,8 +63,14 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     );
   }
 
-  const medicines = await getAllMedicines();
-  const merilProducts = await getAllMerilProducts();
+  const [medicinesResult, merilResult] = await Promise.allSettled([
+    getAllMedicines(),
+    getAllMerilProducts(),
+  ]);
+
+  const medicines = medicinesResult.status === "fulfilled" ? medicinesResult.value : [];
+  const merilProducts = merilResult.status === "fulfilled" ? merilResult.value : [];
+  const dataLoadFailed = medicinesResult.status === "rejected" || merilResult.status === "rejected";
 
   return (
     <div className="content-page container admin-shell">
@@ -67,6 +78,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         <div>
           <h1>Medicine Admin Panel</h1>
           <p className="muted">Manage categories, medicine details, prices, and multiple images.</p>
+          {dataLoadFailed ? (
+            <p className="admin-error">
+              <Lock size={16} /> DB load failed. Check table names, DB credentials, and schema SQL.
+            </p>
+          ) : null}
         </div>
         <form action={logoutAdminAction}>
           <button type="submit" className="btn btn-secondary">
