@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { Lock, LogOut, Plus, Save, Trash2, Upload } from "lucide-react";
 import { AdminQueryCleaner } from "@/app/admin/_components/admin-query-cleaner";
+import { AdminImageUploadForm } from "@/app/admin/_components/admin-image-upload-form";
 import { getAllMerilProducts } from "@/lib/meril";
 import { getAllMedicines } from "@/lib/medicines";
 
@@ -279,18 +280,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
             <div className="admin-images-block">
               <h4>Images</h4>
-              <form
-                action="/admin/upload-images"
-                method="post"
-                encType="multipart/form-data"
-                className="admin-upload-form"
-              >
-                <input type="hidden" name="medicine_id" value={medicine.id} />
-                <input type="file" name="images" accept="image/*" multiple required />
-                <button type="submit" className="btn btn-secondary">
-                  <Upload size={16} /> Upload Images
-                </button>
-              </form>
+              <AdminImageUploadForm medicineId={medicine.id} />
 
               <div className="admin-image-grid">
                 {medicine.imageItems.length === 0 ? (

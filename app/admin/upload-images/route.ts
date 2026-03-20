@@ -28,12 +28,27 @@ function createRedirectUrl(path: string, requestUrl: string) {
   }
 }
 
+function isAjaxUpload(request: Request) {
+  const accept = request.headers.get("accept") ?? "";
+  return request.headers.get("x-medix-ajax") === "1" || accept.includes("application/json");
+}
+
+function respondUpload(request: Request, code: "ok" | "empty" | "invalid" | "large" | "server") {
+  if (isAjaxUpload(request)) {
+    return NextResponse.json({ status: code });
+  }
+  return NextResponse.redirect(createRedirectUrl(`/admin?upload=${code}`, request.url), { status: 303 });
+}
+
 export async function POST(request: Request) {
   try {
     const cookieStore = await cookies();
     const isLoggedIn = cookieStore.get("medix_admin_session")?.value === "1";
 
     if (!isLoggedIn) {
+      if (isAjaxUpload(request)) {
+        return NextResponse.json({ status: "server", error: "unauthorized" }, { status: 401 });
+      }
       return NextResponse.redirect(createRedirectUrl("/admin", request.url), { status: 303 });
     }
 
@@ -44,7 +59,7 @@ export async function POST(request: Request) {
     const medicineId = Number(medicineIdRaw);
 
     if (!Number.isInteger(medicineId) || medicineId <= 0) {
-      return NextResponse.redirect(createRedirectUrl("/admin?upload=invalid", request.url), { status: 303 });
+      return respondUpload(request, "invalid");
     }
 
     const files = formData
@@ -52,16 +67,16 @@ export async function POST(request: Request) {
       .filter((entry): entry is File => entry instanceof File && entry.size > 0);
 
     if (files.length === 0) {
-      return NextResponse.redirect(createRedirectUrl("/admin?upload=empty", request.url), { status: 303 });
+      return respondUpload(request, "empty");
     }
 
     const [medicineRows] = await dbQuery<Array<{ id: number }>>("SELECT id FROM hollister WHERE id = ? LIMIT 1", [medicineId]);
     if (!medicineRows.length) {
-      return NextResponse.redirect(createRedirectUrl("/admin?upload=invalid", request.url), { status: 303 });
+      return respondUpload(request, "invalid");
     }
 
     if (files.some((file) => file.size > MAX_IMAGE_SIZE_BYTES)) {
-      return NextResponse.redirect(createRedirectUrl("/admin?upload=large", request.url), { status: 303 });
+      return respondUpload(request, "large");
     }
 
     const uploadDir = path.join(process.cwd(), "public", "uploads", "medicines", String(medicineId));
@@ -89,9 +104,9 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.redirect(createRedirectUrl("/admin?upload=ok", request.url), { status: 303 });
+    return respondUpload(request, "ok");
   } catch (error) {
     console.error("Failed to upload medicine images", error);
-    return NextResponse.redirect(createRedirectUrl("/admin?upload=server", request.url), { status: 303 });
+    return respondUpload(request, "server");
   }
 }
