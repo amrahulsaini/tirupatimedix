@@ -10,7 +10,6 @@ import {
   deleteMedicineImageAction,
   updateMerilProductAction,
   updateMedicineAction,
-  uploadMedicineImagesAction,
 } from "@/app/admin/actions";
 import { getAllMerilProducts } from "@/lib/meril";
 import { getAllMedicines } from "@/lib/medicines";
@@ -23,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 type AdminPageProps = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; upload?: string }>;
 };
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
@@ -92,6 +91,31 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           {dataLoadFailed ? (
             <p className="admin-error">
               <Lock size={16} /> Catalog data is temporarily unavailable. Please verify settings and try again.
+            </p>
+          ) : null}
+          {params.upload === "ok" ? (
+            <p className="admin-success">
+              <Upload size={16} /> Images uploaded successfully.
+            </p>
+          ) : null}
+          {params.upload === "empty" ? (
+            <p className="admin-error">
+              <Upload size={16} /> Select at least one image before uploading.
+            </p>
+          ) : null}
+          {params.upload === "invalid" ? (
+            <p className="admin-error">
+              <Upload size={16} /> Invalid product selected for image upload.
+            </p>
+          ) : null}
+          {params.upload === "large" ? (
+            <p className="admin-error">
+              <Upload size={16} /> One or more images are too large. Keep each file under 10 MB.
+            </p>
+          ) : null}
+          {params.upload === "server" ? (
+            <p className="admin-error">
+              <Upload size={16} /> Upload failed due to server error. Please try again.
             </p>
           ) : null}
         </div>
@@ -219,7 +243,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
             <div className="admin-images-block">
               <h4>Images</h4>
-              <form action={uploadMedicineImagesAction} className="admin-upload-form">
+              <form
+                action="/admin/upload-images"
+                method="post"
+                encType="multipart/form-data"
+                className="admin-upload-form"
+              >
                 <input type="hidden" name="medicine_id" value={medicine.id} />
                 <input type="file" name="images" accept="image/*" multiple required />
                 <button type="submit" className="btn btn-secondary">

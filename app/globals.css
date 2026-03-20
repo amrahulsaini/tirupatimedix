@@ -834,6 +834,14 @@ textarea:focus {
   margin: 0;
 }
 
+.admin-success {
+  color: #1e7b42;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+}
+
 .route-loader {
   position: fixed;
   inset: 0;
