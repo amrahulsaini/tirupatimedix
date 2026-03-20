@@ -3,14 +3,18 @@ import { cookies } from "next/headers";
 import { Lock, LogOut, Plus, Save, Trash2, Upload } from "lucide-react";
 
 import {
+  createMerilProductAction,
   createMedicineAction,
+  deleteMerilProductAction,
   deleteMedicineAction,
   deleteMedicineImageAction,
   loginAdminAction,
   logoutAdminAction,
+  updateMerilProductAction,
   updateMedicineAction,
   uploadMedicineImagesAction,
 } from "@/app/admin/actions";
+import { getAllMerilProducts } from "@/lib/meril";
 import { getAllMedicines } from "@/lib/medicines";
 
 export const dynamic = "force-dynamic";
@@ -55,6 +59,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   }
 
   const medicines = await getAllMedicines();
+  const merilProducts = await getAllMerilProducts();
 
   return (
     <div className="content-page container admin-shell">
@@ -214,6 +219,103 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 )}
               </div>
             </div>
+          </article>
+        ))}
+      </section>
+
+      <section className="info-card">
+        <h2>Add New Meril Fully Automatic Product</h2>
+        <form action={createMerilProductAction} className="admin-grid-form">
+          <label>
+            Sr. No
+            <input name="sr_no" type="number" min={1} step={1} required />
+          </label>
+          <label>
+            Category
+            <input name="category" defaultValue="meril fully automatic" required />
+          </label>
+          <label className="admin-span-2">
+            Product Name
+            <input name="product_name" required />
+          </label>
+          <label>
+            Pack Size
+            <input name="pack_size" required />
+          </label>
+          <label>
+            MRP Units
+            <input name="mrp_units" type="number" min={0} step="0.01" required />
+          </label>
+          <label>
+            Cut Price
+            <input name="cut_price" type="number" min={0} step="0.01" required />
+          </label>
+          <label>
+            GST
+            <input name="gst" defaultValue="5%" required />
+          </label>
+          <button type="submit" className="btn btn-primary admin-span-2">
+            <Plus size={16} /> Add Meril Product
+          </button>
+        </form>
+      </section>
+
+      <section className="admin-medicine-list">
+        {merilProducts.map((item) => (
+          <article key={item.id} className="info-card admin-medicine-card">
+            <div className="admin-card-head">
+              <h3>
+                {item.productName} <span className="pill">SR: {item.srNo}</span>
+              </h3>
+              <form action={deleteMerilProductAction}>
+                <input type="hidden" name="id" value={item.id} />
+                <button type="submit" className="btn btn-secondary">
+                  <Trash2 size={16} /> Delete
+                </button>
+              </form>
+            </div>
+
+            <form action={updateMerilProductAction} className="admin-grid-form">
+              <input type="hidden" name="id" value={item.id} />
+              <label>
+                Sr. No
+                <input name="sr_no" type="number" min={1} step={1} defaultValue={item.srNo} required />
+              </label>
+              <label>
+                Category
+                <input name="category" defaultValue={item.category} required />
+              </label>
+              <label className="admin-span-2">
+                Product Name
+                <input name="product_name" defaultValue={item.productName} required />
+              </label>
+              <label>
+                Pack Size
+                <input name="pack_size" defaultValue={item.packSize} required />
+              </label>
+              <label>
+                MRP Units
+                <input name="mrp_units" type="number" min={0} step="0.01" defaultValue={item.mrpUnits} required />
+              </label>
+              <label>
+                Cut Price
+                <input
+                  name="cut_price"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  defaultValue={item.cutPrice}
+                  required
+                />
+              </label>
+              <label>
+                GST
+                <input name="gst" defaultValue={item.gst} required />
+              </label>
+              <button type="submit" className="btn btn-primary admin-span-2">
+                <Save size={16} /> Save Meril Product
+              </button>
+            </form>
           </article>
         ))}
       </section>

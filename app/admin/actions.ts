@@ -199,3 +199,70 @@ export async function deleteMedicineImageAction(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/shop");
 }
+
+export async function createMerilProductAction(formData: FormData) {
+  await requireAdminSession();
+  await ensureDatabaseSchema();
+
+  const srNo = toNumber(formData.get("sr_no"));
+  const category = toText(formData.get("category"));
+  const productName = toText(formData.get("product_name"));
+  const packSize = toText(formData.get("pack_size"));
+  const mrpUnits = toNumber(formData.get("mrp_units"));
+  const cutPrice = toNumber(formData.get("cut_price"));
+  const gst = toText(formData.get("gst"));
+
+  if (!srNo || !category || !productName || !packSize || !gst) {
+    throw new Error("All Meril product fields are required.");
+  }
+
+  await dbQuery(
+    `INSERT INTO meril_fully_automatic (sr_no, category, product_name, pack_size, mrp_units, cut_price, gst)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [srNo, category, productName, packSize, mrpUnits, cutPrice, gst]
+  );
+
+  revalidatePath("/admin");
+  revalidatePath("/shop");
+}
+
+export async function updateMerilProductAction(formData: FormData) {
+  await requireAdminSession();
+
+  const id = toNumber(formData.get("id"));
+  const srNo = toNumber(formData.get("sr_no"));
+  const category = toText(formData.get("category"));
+  const productName = toText(formData.get("product_name"));
+  const packSize = toText(formData.get("pack_size"));
+  const mrpUnits = toNumber(formData.get("mrp_units"));
+  const cutPrice = toNumber(formData.get("cut_price"));
+  const gst = toText(formData.get("gst"));
+
+  if (!id) {
+    throw new Error("Meril product id is required.");
+  }
+
+  await dbQuery(
+    `UPDATE meril_fully_automatic
+     SET sr_no = ?, category = ?, product_name = ?, pack_size = ?, mrp_units = ?, cut_price = ?, gst = ?
+     WHERE id = ?`,
+    [srNo, category, productName, packSize, mrpUnits, cutPrice, gst, id]
+  );
+
+  revalidatePath("/admin");
+  revalidatePath("/shop");
+}
+
+export async function deleteMerilProductAction(formData: FormData) {
+  await requireAdminSession();
+
+  const id = toNumber(formData.get("id"));
+  if (!id) {
+    throw new Error("Meril product id is required.");
+  }
+
+  await dbQuery(`DELETE FROM meril_fully_automatic WHERE id = ?`, [id]);
+
+  revalidatePath("/admin");
+  revalidatePath("/shop");
+}

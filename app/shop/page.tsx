@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { SectionTitle } from "@/app/_components/section-title";
+import { getAllMerilProducts } from "@/lib/meril";
 import { getAllMedicines } from "@/lib/medicines";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default async function ShopPage() {
   const medicines = await getAllMedicines().catch(() => []);
   const categories = [...new Set(medicines.map((item) => item.category))];
+  const merilProducts = await getAllMerilProducts().catch(() => []);
 
   return (
     <div className="content-page container">
@@ -66,6 +68,34 @@ export default async function ShopPage() {
           );
         })
       )}
+
+      {merilProducts.length > 0 ? (
+        <section className="section">
+          <SectionTitle
+            eyebrow="Special Catalog"
+            title="Meril Fully Automatic"
+            subtitle={`${merilProducts.length} products available`}
+          />
+          <div className="product-grid">
+            {merilProducts.map((item) => (
+              <article key={item.id} className="product-card meril-card">
+                <div className="product-card__badge-row">
+                  <span className="pill">SR: {item.srNo}</span>
+                  <span className="stock stock--ok">GST {item.gst}</span>
+                </div>
+                <h3>{item.productName}</h3>
+                <p className="muted">Pack Size: {item.packSize}</p>
+                <p className="muted">Category: {item.category}</p>
+                <div className="price-row">
+                  <strong>Rs. {item.cutPrice.toFixed(2)}</strong>
+                  <span>Rs. {item.mrpUnits.toFixed(2)}</span>
+                  <em>Best Price</em>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

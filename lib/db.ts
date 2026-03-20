@@ -57,5 +57,18 @@ export async function ensureDatabaseSchema() {
     )`
   );
 
+  await dbQuery(
+    `CREATE TABLE IF NOT EXISTS meril_fully_automatic (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      sr_no INT NOT NULL,
+      category VARCHAR(100) NOT NULL,
+      product_name VARCHAR(255) NOT NULL,
+      pack_size VARCHAR(50) NOT NULL,
+      mrp_units DECIMAL(10, 2) NOT NULL,
+      cut_price DECIMAL(10, 2) NOT NULL,
+      gst VARCHAR(10) NOT NULL
+    )`
+  );
+
   schemaReady = true;
 }
