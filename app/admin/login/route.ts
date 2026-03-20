@@ -7,19 +7,15 @@ export async function POST(request: Request) {
   const password = String(formData.get("password") ?? "").trim();
   const adminPassword = process.env.ADMIN_PASSWORD;
 
-  const redirectUrl = new URL("/admin", request.url);
-
   if (!adminPassword) {
-    redirectUrl.searchParams.set("error", "config");
-    return NextResponse.redirect(redirectUrl);
+    return NextResponse.redirect("/admin?error=config", { status: 303 });
   }
 
   if (password !== adminPassword) {
-    redirectUrl.searchParams.set("error", "invalid");
-    return NextResponse.redirect(redirectUrl);
+    return NextResponse.redirect("/admin?error=invalid", { status: 303 });
   }
 
-  const response = NextResponse.redirect(redirectUrl);
+  const response = NextResponse.redirect("/admin", { status: 303 });
   response.cookies.set(ADMIN_COOKIE, "1", {
     httpOnly: true,
     sameSite: "lax",
