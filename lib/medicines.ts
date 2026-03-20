@@ -56,7 +56,7 @@ export async function getAllMedicines() {
 
   const [medicineRows] = await dbQuery<MedicineRow[]>(
     `SELECT id, code, category, generic_name, packing_per_box, dp_units, mrp_units, cut_price
-     FROM medicines
+      FROM hollister
      ORDER BY category ASC, generic_name ASC`
   );
 

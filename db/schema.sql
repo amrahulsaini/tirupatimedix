@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS medicines (
+CREATE TABLE IF NOT EXISTS hollister (
     id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(50) NOT NULL,
     category VARCHAR(100) NOT NULL,
@@ -15,5 +15,5 @@ CREATE TABLE IF NOT EXISTS medicine_images (
     image_path VARCHAR(500) NOT NULL,
     sort_order INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (medicine_id) REFERENCES medicines(id) ON DELETE CASCADE
+    FOREIGN KEY (medicine_id) REFERENCES hollister(id) ON DELETE CASCADE
 );

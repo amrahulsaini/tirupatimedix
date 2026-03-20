@@ -53,7 +53,7 @@ export async function ensureDatabaseSchema() {
       image_path VARCHAR(500) NOT NULL,
       sort_order INT NOT NULL DEFAULT 0,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (medicine_id) REFERENCES medicines(id) ON DELETE CASCADE
+      FOREIGN KEY (medicine_id) REFERENCES hollister(id) ON DELETE CASCADE
     )`
   );
 

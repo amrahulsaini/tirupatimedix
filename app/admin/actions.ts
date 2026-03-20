@@ -80,7 +80,7 @@ export async function createMedicineAction(formData: FormData) {
   }
 
   await dbQuery(
-    `INSERT INTO medicines (code, category, generic_name, packing_per_box, dp_units, mrp_units, cut_price)
+    `INSERT INTO hollister (code, category, generic_name, packing_per_box, dp_units, mrp_units, cut_price)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [code, category, genericName, packingPerBox, dpUnits, mrpUnits, cutPrice]
   );
@@ -106,7 +106,7 @@ export async function updateMedicineAction(formData: FormData) {
   }
 
   await dbQuery(
-    `UPDATE medicines
+    `UPDATE hollister
      SET code = ?, category = ?, generic_name = ?, packing_per_box = ?, dp_units = ?, mrp_units = ?, cut_price = ?
      WHERE id = ?`,
     [code, category, genericName, packingPerBox, dpUnits, mrpUnits, cutPrice, id]
@@ -124,7 +124,7 @@ export async function deleteMedicineAction(formData: FormData) {
     throw new Error("Medicine id is required.");
   }
 
-  await dbQuery(`DELETE FROM medicines WHERE id = ?`, [id]);
+  await dbQuery(`DELETE FROM hollister WHERE id = ?`, [id]);
 
   const medicineDir = path.join(process.cwd(), "public", "uploads", "medicines", String(id));
   await rm(medicineDir, { recursive: true, force: true });
