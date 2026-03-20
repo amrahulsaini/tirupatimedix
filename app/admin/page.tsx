@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { Lock, LogOut, Plus, Save, Trash2, Upload } from "lucide-react";
+import { AdminQueryCleaner } from "@/app/admin/_components/admin-query-cleaner";
 
 import {
   createMerilProductAction,
@@ -56,6 +57,7 @@ function getAdminActionMessage(action?: string, status?: string) {
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
   const params = await searchParams;
+  const hasQueryFeedback = Boolean(params.error || params.upload || params.action || params.status);
   const actionMessage = getAdminActionMessage(params.action, params.status);
   const cookieStore = await cookies();
   const isLoggedIn = cookieStore.get("medix_admin_session")?.value === "1";
@@ -114,6 +116,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
   return (
     <div className="content-page container admin-shell">
+      {hasQueryFeedback ? <AdminQueryCleaner /> : null}
       <section className="info-card admin-header">
         <div>
           <h1>Medicine Admin Panel</h1>
