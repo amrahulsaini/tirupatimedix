@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Space_Grotesk } from "next/font/google";
 
+import { RouteTransitionLoader } from "@/app/_components/route-transition-loader";
 import { SiteFooter } from "@/app/_components/site-footer";
 import { SiteHeader } from "@/app/_components/site-header";
 import "./globals.css";
@@ -57,6 +58,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${dmSerifDisplay.variable}`}>
       <body>
+        <RouteTransitionLoader />
         <SiteHeader />
         <main className="page-main">{children}</main>
         <SiteFooter />

@@ -683,6 +683,40 @@ textarea:focus {
   color: var(--ink-soft);
 }
 
+.route-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: rgba(245, 247, 244, 0.45);
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+}
+
+.route-loader__panel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid rgba(19, 32, 27, 0.1);
+  box-shadow: 0 12px 24px rgba(16, 55, 41, 0.16);
+  padding: 0.55rem 0.8rem;
+}
+
+.route-loader__spinner {
+  color: var(--brand);
+  animation: spin 0.9s linear infinite;
+}
+
+.route-loader__panel p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
 @media (max-width: 980px) {
   .nav-shell {
     display: flex;
