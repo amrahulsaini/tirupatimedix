@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { Ambulance, BadgePercent, CheckCheck, ShieldCheck, Truck } from "lucide-react";
+import { BadgePercent } from "lucide-react";
 
 import { SectionTitle } from "@/app/_components/section-title";
-import { storeAddress } from "@/app/_data/products";
 import { getAllMerilProducts } from "@/lib/meril";
 import { getAllMedicines } from "@/lib/medicines";
 
@@ -18,14 +17,6 @@ export default async function Home() {
 
   return (
     <div className="landing-page">
-      <section className="home-top-banner" aria-label="Shipping and delivery highlights">
-        <div className="home-top-banner__inner">
-          <span>Free Shipping above Rs. 400</span>
-          <span>Delivery in 4 to 5 days</span>
-          <span>Secure packaging and genuine products</span>
-        </div>
-      </section>
-
       <section className="home-banner-full">
         <picture>
           <source media="(max-width: 768px)" srcSet="/tirupati-banner-mobile.png" />
@@ -35,51 +26,6 @@ export default async function Home() {
             className="home-banner__image"
           />
         </picture>
-      </section>
-
-      <section className="hero container">
-        <div className="hero__content">
-          <p className="hero__eyebrow">Ostomy Care and Diagnostic Catalog</p>
-          <h1>Trusted medical products curated for hospitals, clinics, and patient care.</h1>
-          <p>
-            Tirupati Medix brings Hollister and Meril Fully Automatic ranges together with
-            transparent pricing and organized categories.
-          </p>
-          <div className="hero__cta">
-            <Link href="/shop" className="btn btn-primary">
-              Shop Catalog
-            </Link>
-            <Link href="/contact" className="btn btn-secondary">
-              Contact Support
-            </Link>
-          </div>
-          <div className="hero__stats">
-            <span>
-              <ShieldCheck size={16} /> 100% Genuine Products
-            </span>
-            <span>
-              <Truck size={16} /> {totalProducts} Products Listed
-            </span>
-            <span>
-              <Ambulance size={16} /> Emergency Support Line
-            </span>
-          </div>
-        </div>
-        <div className="hero__panel">
-          <h3>Why teams trust Tirupati Medix</h3>
-          <ul>
-            <li>
-              <CheckCheck size={18} /> Professionally managed product catalog with consistent updates.
-            </li>
-            <li>
-              <CheckCheck size={18} /> Admin updates instantly reflected on storefront pages.
-            </li>
-            <li>
-              <CheckCheck size={18} /> Structured product pricing with MRP and final cut price.
-            </li>
-          </ul>
-          <p>{storeAddress}</p>
-        </div>
       </section>
 
       <section className="container section">

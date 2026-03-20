@@ -65,28 +65,44 @@ a {
 }
 
 .top-strip {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.28rem 0;
-  color: var(--ink-soft);
-  font-size: 0.78rem;
+  background: linear-gradient(90deg, #0f4f3a, #166249);
+  color: #f3fff8;
+  border-bottom: 1px solid rgba(9, 43, 31, 0.35);
+  overflow: hidden;
 }
 
-.top-strip p {
-  margin: 0;
+.top-strip__ticker-wrap {
+  height: 34px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.top-strip__ticker-track {
+  display: flex;
+  width: max-content;
+  gap: 1.1rem;
+  animation: ticker-scroll 20s linear infinite;
+  will-change: transform;
+}
+
+.top-strip__item {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.34rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
-.top-strip a {
-  color: var(--brand-strong);
-  font-weight: 600;
-}
-
-.top-strip a:hover {
-  opacity: 0.82;
+.top-strip__item:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .nav-shell {
@@ -981,19 +997,21 @@ textarea:focus {
 }
 
 @media (max-width: 720px) {
-  .home-top-banner__inner {
-    grid-template-columns: 1fr;
-    gap: 0.35rem;
-    padding: 0.45rem 0.6rem;
-  }
-
-  .home-top-banner__inner span {
-    font-size: 0.78rem;
-    padding: 0.3rem 0.45rem;
-  }
-
   .top-strip {
-    display: none;
+    display: block;
+  }
+
+  .top-strip__ticker-wrap {
+    height: 30px;
+  }
+
+  .top-strip__ticker-track {
+    animation-duration: 16s;
+  }
+
+  .top-strip__item {
+    font-size: 0.76rem;
+    padding: 0.28rem 0.58rem;
   }
 
   .nav-shell {
@@ -1047,6 +1065,16 @@ textarea:focus {
 
   .admin-image-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
   }
 }
 

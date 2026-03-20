@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { HeartPulse, Menu, Search, ShoppingCart, X } from "lucide-react";
+import { Menu, Search, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 
 const navLinks = [
@@ -18,12 +18,19 @@ export function SiteHeader() {
 
   return (
     <header className="site-header">
-      <div className="container top-strip">
-        <p>
-          <HeartPulse size={14} />
-          Trusted online medicine delivery for Udaipur and nearby locations
-        </p>
-        <Link href="/contact">Need help? Talk to a pharmacist</Link>
+      <div className="top-strip" aria-label="Announcements">
+        <div className="container top-strip__ticker-wrap">
+          <div className="top-strip__ticker-track">
+            <span className="top-strip__item">Free Shipping above Rs. 400</span>
+            <span className="top-strip__item">Delivery in 4 to 5 days</span>
+            <span className="top-strip__item">100% genuine medical products</span>
+            <span className="top-strip__item">Need help? Talk to a pharmacist at Contact</span>
+            <span className="top-strip__item">Free Shipping above Rs. 400</span>
+            <span className="top-strip__item">Delivery in 4 to 5 days</span>
+            <span className="top-strip__item">100% genuine medical products</span>
+            <span className="top-strip__item">Need help? Talk to a pharmacist at Contact</span>
+          </div>
+        </div>
       </div>
       <div className="container nav-shell">
         <Link href="/" className="brand" onClick={() => setIsOpen(false)}>
