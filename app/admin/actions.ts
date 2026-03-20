@@ -28,29 +28,19 @@ function toText(value: FormDataEntryValue | null) {
   return String(value ?? "").trim();
 }
 
-function path: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  if (baseUrl) {
-    // Remove trailing slash if present
-    const base = baseUrl.replace(/\/$/, "");
-    return `${base}${path}`;
-  }
-  return path;
-}
-
 export async function createMedicineAction(formData: FormData) {
   let status = "ok";
   try {
     await requireAdminSession();
     await ensureDatabaseSchema();
 
-    const code = toText(formData.get("code");
-    const category = toText(formData.get("category");
-    const genericName = toText(formData.get("generic_name");
-    const packingPerBox = toNumber(formData.get("packing_per_box");
-    const dpUnits = toNumber(formData.get("dp_units");
-    const mrpUnits = toNumber(formData.get("mrp_units");
-    const cutPrice = toNumber(formData.get("cut_price");
+    const code = toText(formData.get("code"));
+    const category = toText(formData.get("category"));
+    const genericName = toText(formData.get("generic_name"));
+    const packingPerBox = toNumber(formData.get("packing_per_box"));
+    const dpUnits = toNumber(formData.get("dp_units"));
+    const mrpUnits = toNumber(formData.get("mrp_units"));
+    const cutPrice = toNumber(formData.get("cut_price"));
 
     if (!code || !category || !genericName) {
       status = "invalid";
@@ -77,14 +67,14 @@ export async function updateMedicineAction(formData: FormData) {
     await requireAdminSession();
     await ensureDatabaseSchema();
 
-    const id = toNumber(formData.get("id");
-    const code = toText(formData.get("code");
-    const category = toText(formData.get("category");
-    const genericName = toText(formData.get("generic_name");
-    const packingPerBox = toNumber(formData.get("packing_per_box");
-    const dpUnits = toNumber(formData.get("dp_units");
-    const mrpUnits = toNumber(formData.get("mrp_units");
-    const cutPrice = toNumber(formData.get("cut_price");
+    const id = toNumber(formData.get("id"));
+    const code = toText(formData.get("code"));
+    const category = toText(formData.get("category"));
+    const genericName = toText(formData.get("generic_name"));
+    const packingPerBox = toNumber(formData.get("packing_per_box"));
+    const dpUnits = toNumber(formData.get("dp_units"));
+    const mrpUnits = toNumber(formData.get("mrp_units"));
+    const cutPrice = toNumber(formData.get("cut_price"));
 
     if (!id || !code || !category || !genericName) {
       status = "invalid";
@@ -112,12 +102,12 @@ export async function deleteMedicineAction(formData: FormData) {
     await requireAdminSession();
     await ensureDatabaseSchema();
 
-    const id = toNumber(formData.get("id");
+    const id = toNumber(formData.get("id"));
     if (!id) {
       status = "invalid";
     } else {
       await dbQuery(`DELETE FROM hollister WHERE id = ?`, [id]);
-      const medicineDir = path.join(process.cwd(), "public", "uploads", "medicines", String(id);
+      const medicineDir = path.join(process.cwd(), "public", "uploads", "medicines", String(id));
       await rm(medicineDir, { recursive: true, force: true }).catch(() => {});
     }
   } catch (err) {
@@ -136,14 +126,14 @@ export async function deleteMedicineImageAction(formData: FormData) {
     await requireAdminSession();
     await ensureDatabaseSchema();
 
-    const imageId = toNumber(formData.get("image_id");
-    const imagePath = toText(formData.get("image_path");
+    const imageId = toNumber(formData.get("image_id"));
+    const imagePath = toText(formData.get("image_path"));
 
     if (!imageId || !imagePath) {
       status = "invalid";
     } else {
       await dbQuery(`DELETE FROM medicine_images WHERE id = ?`, [imageId]);
-      const diskPath = path.join(process.cwd(), "public", imagePath.replace(/^\//, "");
+      const diskPath = path.join(process.cwd(), "public", imagePath.replace(/^\//, ""));
       await unlink(diskPath).catch(() => {});
     }
   } catch (err) {
@@ -162,13 +152,13 @@ export async function createMerilProductAction(formData: FormData) {
     await requireAdminSession();
     await ensureDatabaseSchema();
 
-    const srNo = toNumber(formData.get("sr_no");
-    const category = toText(formData.get("category");
-    const productName = toText(formData.get("product_name");
-    const packSize = toText(formData.get("pack_size");
-    const mrpUnits = toNumber(formData.get("mrp_units");
-    const cutPrice = toNumber(formData.get("cut_price");
-    const gst = toText(formData.get("gst");
+    const srNo = toNumber(formData.get("sr_no"));
+    const category = toText(formData.get("category"));
+    const productName = toText(formData.get("product_name"));
+    const packSize = toText(formData.get("pack_size"));
+    const mrpUnits = toNumber(formData.get("mrp_units"));
+    const cutPrice = toNumber(formData.get("cut_price"));
+    const gst = toText(formData.get("gst"));
 
     if (!srNo || !category || !productName || !packSize || !gst) {
       status = "invalid";
@@ -195,14 +185,14 @@ export async function updateMerilProductAction(formData: FormData) {
     await requireAdminSession();
     await ensureDatabaseSchema();
 
-    const id = toNumber(formData.get("id");
-    const srNo = toNumber(formData.get("sr_no");
-    const category = toText(formData.get("category");
-    const productName = toText(formData.get("product_name");
-    const packSize = toText(formData.get("pack_size");
-    const mrpUnits = toNumber(formData.get("mrp_units");
-    const cutPrice = toNumber(formData.get("cut_price");
-    const gst = toText(formData.get("gst");
+    const id = toNumber(formData.get("id"));
+    const srNo = toNumber(formData.get("sr_no"));
+    const category = toText(formData.get("category"));
+    const productName = toText(formData.get("product_name"));
+    const packSize = toText(formData.get("pack_size"));
+    const mrpUnits = toNumber(formData.get("mrp_units"));
+    const cutPrice = toNumber(formData.get("cut_price"));
+    const gst = toText(formData.get("gst"));
 
     if (!id || !srNo || !category || !productName || !packSize || !gst) {
       status = "invalid";
@@ -230,7 +220,7 @@ export async function deleteMerilProductAction(formData: FormData) {
     await requireAdminSession();
     await ensureDatabaseSchema();
 
-    const id = toNumber(formData.get("id");
+    const id = toNumber(formData.get("id"));
     if (!id) {
       status = "invalid";
     } else {
