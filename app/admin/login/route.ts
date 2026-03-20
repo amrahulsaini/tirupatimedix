@@ -37,10 +37,14 @@ export async function POST(request: Request) {
     }
 
     const cookieStore = await cookies();
+    
+    // Check if the request is actually coming in over HTTPS through proxy or directly
+    const isHttps = request.url.startsWith("https://") || request.headers.get("x-forwarded-proto") === "https";
+
     cookieStore.set(ADMIN_COOKIE, "1", {
       httpOnly: true,
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      secure: isHttps,
       maxAge: 60 * 60 * 12,
       path: "/",
     });
