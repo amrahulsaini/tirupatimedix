@@ -132,8 +132,8 @@ a {
 }
 
 .brand-mark {
-  width: clamp(90px, 7.6vw, 108px);
-  height: clamp(58px, 5.4vw, 72px);
+  width: clamp(62px, 5.4vw, 74px);
+  height: clamp(62px, 5.4vw, 74px);
   border-radius: 999px;
   border: 2px solid rgba(22, 98, 73, 0.2);
   background: linear-gradient(150deg, #e7f3ec, #f7fbf9);
@@ -144,6 +144,7 @@ a {
   justify-content: center;
   box-shadow: 0 8px 18px rgba(16, 55, 41, 0.12);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  flex-shrink: 0;
 }
 
 .brand:hover .brand-mark {
@@ -154,7 +155,7 @@ a {
 .brand-mark img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   border-radius: 999px;
   display: block;
@@ -1005,6 +1006,47 @@ textarea:focus {
 }
 
 /* --- Admin Section Divider --- */
+/* --- Admin Category Filter Tabs --- */
+.admin-category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.admin-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--surface);
+  color: var(--ink-soft);
+  border: 1.5px solid var(--border);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.admin-tab:hover {
+  background: var(--brand-mist);
+  color: var(--brand);
+  border-color: var(--brand);
+}
+
+.admin-tab--active {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+.admin-tab--active:hover {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+  color: #fff;
+}
+
 .admin-section-divider {
   margin-top: 1.5rem;
   border-top: 3px solid var(--brand-accent);
@@ -1185,7 +1227,7 @@ textarea:focus {
   }
 
   .brand-mark {
-    width: 86px;
+    width: 56px;
     height: 56px;
     padding: 0;
   }

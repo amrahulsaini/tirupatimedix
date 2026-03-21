@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { cookies } from "next/headers";
-import { Lock, LogOut, Plus, Save, Trash2, Upload } from "lucide-react";
+import { Lock, LogOut, Plus, Save, Trash2, Upload, Filter } from "lucide-react";
 import { AdminQueryCleaner } from "@/app/admin/_components/admin-query-cleaner";
 import { AdminImageUploadForm } from "@/app/admin/_components/admin-image-upload-form";
 import { getAllMerilProducts } from "@/lib/meril";
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 type AdminPageProps = {
-  searchParams: Promise<{ error?: string; upload?: string; action?: string; status?: string }>;
+  searchParams: Promise<{ error?: string; upload?: string; action?: string; status?: string; tab?: string }>;
 };
 
 function getAdminActionMessage(action?: string, status?: string) {
@@ -56,6 +57,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   const params = await searchParams;
   const hasQueryFeedback = Boolean(params.error || params.upload || params.action || params.status);
   const actionMessage = getAdminActionMessage(params.action, params.status);
+  const activeTab = params.tab || "all";
   const cookieStore = await cookies();
   const isLoggedIn = cookieStore.get("medix_admin_session")?.value === "1";
 
@@ -169,6 +171,22 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         </form>
       </section>
 
+      <nav className="admin-category-tabs">
+        <Link href="/admin?tab=all" className={`admin-tab${activeTab === "all" ? " admin-tab--active" : ""}`}>
+          <Filter size={14} /> All Categories
+        </Link>
+        <Link href="/admin?tab=hollister" className={`admin-tab${activeTab === "hollister" ? " admin-tab--active" : ""}`}>
+          Hollister ({medicines.length})
+        </Link>
+        <Link href="/admin?tab=meril-full" className={`admin-tab${activeTab === "meril-full" ? " admin-tab--active" : ""}`}>
+          Meril Fully Auto ({merilProducts.length})
+        </Link>
+        <Link href="/admin?tab=meril-semi" className={`admin-tab${activeTab === "meril-semi" ? " admin-tab--active" : ""}`}>
+          Meril Semi Auto ({merilSemiProducts.length})
+        </Link>
+      </nav>
+
+      {(activeTab === "all" || activeTab === "hollister") && (<>
       <section className="info-card">
         <h2>Add New Medicine</h2>
         <form action="/admin/mutate" method="post" className="admin-grid-form">
@@ -314,7 +332,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </article>
         ))}
       </section>
+      </>)}
 
+      {(activeTab === "all" || activeTab === "meril-full") && (<>
       <section className="info-card">
         <h2>Add New Meril Fully Automatic Product</h2>
         <form action="/admin/mutate" method="post" className="admin-grid-form">
@@ -439,7 +459,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </article>
         ))}
       </section>
+      </>)}
 
+      {(activeTab === "all" || activeTab === "meril-semi") && (<>
       <section className="info-card admin-section-divider">
         <h2>Add New Meril Semi-Automatic Product</h2>
         <form action="/admin/mutate" method="post" className="admin-grid-form">
@@ -565,6 +587,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </article>
         ))}
       </section>
+      </>)}
     </div>
   );
 }
