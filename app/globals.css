@@ -439,12 +439,15 @@ a {
 
 .showcase-card {
   position: relative;
-  display: block;
-  border-radius: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
   overflow: hidden;
   text-decoration: none;
   animation: rise 0.5s ease both;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  background: var(--surface);
+  border: 1px solid rgba(19, 32, 27, 0.09);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   transition: transform 0.32s cubic-bezier(.22,.68,0,1), box-shadow 0.32s ease;
 }
 
@@ -453,24 +456,20 @@ a {
 .showcase-card:nth-child(4) { animation-delay: 0.18s; }
 
 .showcase-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(16,55,41,0.16);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 36px rgba(16,55,41,0.13);
 }
 
 .showcase-card__image {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: linear-gradient(160deg, #f2f8f4, #eaf1ec);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .showcase-card__image img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   transition: transform 0.5s cubic-bezier(.22,.68,0,1);
 }
@@ -483,11 +482,12 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.9rem 1.1rem;
+  padding: 0.85rem 1rem;
   background: var(--surface);
+  border-top: 1px solid rgba(19, 32, 27, 0.08);
   font-weight: 700;
-  font-size: 0.92rem;
-  letter-spacing: 0.06em;
+  font-size: 0.88rem;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--ink);
 }
