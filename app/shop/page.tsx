@@ -116,6 +116,9 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           <div className="product-grid">
             {filteredMeril.map((item) => (
               <article key={item.id} className="product-card meril-card">
+                {item.images[0] ? (
+                  <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
+                ) : null}
                 <h3>{item.productName}</h3>
                 <p className="muted">Pack Size: {item.packSize}</p>
                 <p className="muted">Category: {item.category}</p>

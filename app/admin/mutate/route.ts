@@ -16,7 +16,8 @@ type Operation =
   | "delete-image"
   | "create-meril"
   | "update-meril"
-  | "delete-meril";
+  | "delete-meril"
+  | "delete-meril-image";
 
 function toNumber(value: FormDataEntryValue | null) {
   const num = Number(value);
@@ -184,6 +185,22 @@ export async function POST(request: Request) {
         }
 
         await dbQuery("DELETE FROM meril_fully_automatic WHERE id = ?", [id]);
+        const merilDir = path.join(process.cwd(), "public", "uploads", "meril", String(id));
+        await rm(merilDir, { recursive: true, force: true }).catch(() => {});
+        break;
+      }
+
+      case "delete-meril-image": {
+        const imageId = toNumber(formData.get("image_id"));
+        const imagePath = toText(formData.get("image_path"));
+        if (!imageId || !imagePath) {
+          status = "invalid";
+          break;
+        }
+
+        await dbQuery("DELETE FROM meril_product_images WHERE id = ?", [imageId]);
+        const diskPath = path.join(process.cwd(), "public", imagePath.replace(/^\//, ""));
+        await unlink(diskPath).catch(() => {});
         break;
       }
 

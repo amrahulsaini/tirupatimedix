@@ -70,5 +70,16 @@ export async function ensureDatabaseSchema() {
     )`
   );
 
+  await dbQuery(
+    `CREATE TABLE IF NOT EXISTS meril_product_images (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      meril_product_id INT NOT NULL,
+      image_path VARCHAR(500) NOT NULL,
+      sort_order INT NOT NULL DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (meril_product_id) REFERENCES meril_fully_automatic(id) ON DELETE CASCADE
+    )`
+  );
+
   schemaReady = true;
 }

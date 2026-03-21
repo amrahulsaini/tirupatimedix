@@ -11,6 +11,8 @@ export type MerilProduct = {
   mrpUnits: number;
   cutPrice: number;
   gst: string;
+  images: string[];
+  imageItems: { id: number; path: string }[];
 };
 
 type MerilRow = {
@@ -24,6 +26,13 @@ type MerilRow = {
   gst: string;
 };
 
+type MerilImageRow = {
+  id: number;
+  meril_product_id: number;
+  image_path: string;
+  sort_order: number;
+};
+
 export async function getAllMerilProducts(): Promise<MerilProduct[]> {
   await ensureDatabaseSchema();
 
@@ -32,6 +41,19 @@ export async function getAllMerilProducts(): Promise<MerilProduct[]> {
      FROM meril_fully_automatic
      ORDER BY sr_no ASC, product_name ASC`
   );
+
+  const [imageRows] = await dbQuery<MerilImageRow[]>(
+    `SELECT id, meril_product_id, image_path, sort_order
+     FROM meril_product_images
+     ORDER BY meril_product_id ASC, sort_order ASC, id ASC`
+  );
+
+  const imageMap = new Map<number, { id: number; path: string }[]>();
+  for (const image of imageRows) {
+    const existing = imageMap.get(image.meril_product_id) ?? [];
+    existing.push({ id: image.id, path: image.image_path });
+    imageMap.set(image.meril_product_id, existing);
+  }
 
   return rows.map((row) => ({
     id: row.id,
@@ -42,5 +64,7 @@ export async function getAllMerilProducts(): Promise<MerilProduct[]> {
     mrpUnits: Number(row.mrp_units),
     cutPrice: Number(row.cut_price),
     gst: row.gst,
+    images: (imageMap.get(row.id) ?? []).map((item) => item.path),
+    imageItems: imageMap.get(row.id) ?? [],
   }));
 }

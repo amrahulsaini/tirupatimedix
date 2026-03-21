@@ -30,6 +30,7 @@ function getAdminActionMessage(action?: string, status?: string) {
     "create-meril": "Meril product added",
     "update-meril": "Meril product updated",
     "delete-meril": "Meril product deleted",
+    "delete-meril-image": "Meril image removed",
   };
 
   const label = labels[action] ?? "Action";
@@ -280,7 +281,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
             <div className="admin-images-block">
               <h4>Images</h4>
-              <AdminImageUploadForm medicineId={medicine.id} />
+              <AdminImageUploadForm entityId={medicine.id} target="medicine" />
 
               <div className="admin-image-grid">
                 {medicine.imageItems.length === 0 ? (
@@ -402,6 +403,31 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 <Save size={16} /> Save Meril Product
               </button>
             </form>
+
+            <div className="admin-images-block">
+              <h4>Meril Images</h4>
+              <AdminImageUploadForm entityId={item.id} target="meril" />
+
+              <div className="admin-image-grid">
+                {item.imageItems.length === 0 ? (
+                  <p className="muted">No images uploaded yet.</p>
+                ) : (
+                  item.imageItems.map((image, index) => (
+                    <div key={image.id} className="admin-image-item">
+                      <img src={image.path} alt={`${item.productName} ${index + 1}`} />
+                      <form action="/admin/mutate" method="post">
+                        <input type="hidden" name="op" value="delete-meril-image" />
+                        <input type="hidden" name="image_id" value={image.id} />
+                        <input type="hidden" name="image_path" value={image.path} />
+                        <button type="submit" className="btn btn-secondary">
+                          Remove
+                        </button>
+                      </form>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </article>
         ))}
       </section>

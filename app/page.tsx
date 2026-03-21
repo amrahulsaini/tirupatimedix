@@ -105,6 +105,9 @@ export default async function Home() {
         <div className="product-grid">
           {topMeril.map((item) => (
             <article key={item.id} className="product-card meril-card">
+              {item.images[0] ? (
+                <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
+              ) : null}
               <h3>{item.productName}</h3>
               <p className="muted">Pack Size: {item.packSize}</p>
               <div className="price-row">

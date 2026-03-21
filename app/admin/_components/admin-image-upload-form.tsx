@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 type AdminImageUploadFormProps = {
-  medicineId: number;
+  entityId: number;
+  target: "medicine" | "meril";
 };
 
 type UploadStatus =
@@ -22,10 +23,13 @@ function messageFromCode(code: string) {
   return { kind: "error" as const, text: "Upload failed due to server error. Please try again." };
 }
 
-export function AdminImageUploadForm({ medicineId }: AdminImageUploadFormProps) {
+export function AdminImageUploadForm({ entityId, target }: AdminImageUploadFormProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [status, setStatus] = useState<UploadStatus>({ kind: "idle" });
+
+  const actionPath = target === "meril" ? "/admin/upload-meril-images" : "/admin/upload-images";
+  const idField = target === "meril" ? "meril_id" : "medicine_id";
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +39,7 @@ export function AdminImageUploadForm({ medicineId }: AdminImageUploadFormProps) 
     setStatus({ kind: "loading" });
 
     try {
-      const response = await fetch("/admin/upload-images", {
+      const response = await fetch(actionPath, {
         method: "POST",
         body: formData,
         headers: {
@@ -62,13 +66,13 @@ export function AdminImageUploadForm({ medicineId }: AdminImageUploadFormProps) 
     <>
       <form
         ref={formRef}
-        action="/admin/upload-images"
+        action={actionPath}
         method="post"
         encType="multipart/form-data"
         className="admin-upload-form"
         onSubmit={onSubmit}
       >
-        <input type="hidden" name="medicine_id" value={medicineId} />
+        <input type="hidden" name={idField} value={entityId} />
         <input type="file" name="images" accept="image/*" multiple required />
         <button type="submit" className="btn btn-secondary" disabled={status.kind === "loading"}>
           <Upload size={16} /> {status.kind === "loading" ? "Uploading..." : "Upload Images"}
