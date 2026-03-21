@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { BadgePercent } from "lucide-react";
 
 import { SectionTitle } from "@/app/_components/section-title";
 import { getAllMerilProducts } from "@/lib/meril";
@@ -110,6 +109,9 @@ export default async function Home() {
             </article>
           ))}
         </div>
+        <div className="view-all-row">
+          <Link className="btn btn-primary" href="/shop?category=hollister">View All Hollister Products</Link>
+        </div>
       </section>
 
       <section className="container section">
@@ -133,6 +135,9 @@ export default async function Home() {
               </div>
             </article>
           ))}
+        </div>
+        <div className="view-all-row">
+          <Link className="btn btn-primary" href="/shop?category=meril-fully-automatic">View All Meril Fully Automatic Products</Link>
         </div>
       </section>
 
@@ -158,6 +163,9 @@ export default async function Home() {
             </article>
           ))}
         </div>
+        <div className="view-all-row">
+          <Link className="btn btn-primary" href="/shop?category=meril-semi-automatic">View All Meril Semi Automatic Products</Link>
+        </div>
       </section>
 
       {totalProducts === 0 ? (
@@ -167,16 +175,6 @@ export default async function Home() {
         </section>
       ) : null}
 
-      <section className="container section promo-strip">
-        <div>
-          <BadgePercent size={20} />
-          <h3>Unified Ostomy Care Catalog</h3>
-          <p>Manage Hollister, Meril Fully Automatic, and Meril Semi Automatic from one admin workflow.</p>
-        </div>
-        <Link className="btn btn-primary" href="/admin">
-          Manage Catalog
-        </Link>
-      </section>
     </div>
   );
 }

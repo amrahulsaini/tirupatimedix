@@ -660,6 +660,12 @@ a {
   margin: 0;
 }
 
+.view-all-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
 .content-page {
   padding: 2rem 0 4rem;
 }
