@@ -404,7 +404,7 @@ a {
 
 .category-showcase {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
 }
 
@@ -1069,14 +1069,14 @@ textarea:focus {
   color: #8b5e14;
 }
 
-/* --- Dynamic Techno Pill Badge --- */
-.pill--dynamic {
+/* --- Wound Dressing Pill Badge --- */
+.pill--wound {
   background: linear-gradient(120deg, #e8f0fe, #d2e3fc);
   color: #1a56db;
 }
 
-/* --- Dynamic Techno Card Accent --- */
-.dynamic-techno-card {
+/* --- Wound Dressing Card Accent --- */
+.wound-dressing-card {
   border-left: 3px solid #1a56db;
 }
 

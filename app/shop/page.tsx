@@ -27,9 +27,9 @@ export default async function ShopPage() {
   return (
     <div className="content-page container">
       <div className="content-hero">
-        <h1>Shop Ostomy Care Products</h1>
+        <h1>Shop Medical Products</h1>
         <p>
-          Explore our complete range of ostomy care and diagnostic products with
+          Explore our complete range of ostomy care, pathology, and wound dressing products with
           transparent pricing and category-wise listings.
         </p>
       </div>
@@ -38,10 +38,9 @@ export default async function ShopPage() {
         <p>Filter By Category</p>
         <div className="filter-chips">
           <Link href="/shop" className="filter-chip filter-chip--active">All Categories</Link>
-          <Link href="/shop/hollister" className="filter-chip">Hollister</Link>
-          <Link href="/shop/meril-fully-automatic" className="filter-chip">Meril Fully Automatic</Link>
-          <Link href="/shop/meril-semi-automatic" className="filter-chip">Meril Semi Automatic</Link>
-          <Link href="/shop/dynamic-techno" className="filter-chip">Dynamic Techno</Link>
+          <Link href="/shop/ostomy-care" className="filter-chip">Ostomy Care</Link>
+          <Link href="/shop/pathology-products" className="filter-chip">Pathology Products</Link>
+          <Link href="/shop/wound-dressing" className="filter-chip">Wound Dressing</Link>
         </div>
       </nav>
 
@@ -58,7 +57,7 @@ export default async function ShopPage() {
             return (
               <section className="section" key={category}>
                 <SectionTitle
-                  eyebrow="Hollister"
+                  eyebrow="Ostomy Care"
                   title={category}
                   subtitle={`${categoryItems.length} products available`}
                 />
@@ -89,8 +88,8 @@ export default async function ShopPage() {
       {merilProducts.length > 0 ? (
         <section className="section">
           <SectionTitle
-            eyebrow="Meril"
-            title="Meril Fully Automatic"
+            eyebrow="Pathology"
+            title="Fully Automatic Reagents"
             subtitle={`${merilProducts.length} products available`}
           />
           <div className="product-grid">
@@ -115,8 +114,8 @@ export default async function ShopPage() {
       {merilSemiProducts.length > 0 ? (
         <section className="section">
           <SectionTitle
-            eyebrow="Meril"
-            title="Meril Semi Automatic"
+            eyebrow="Pathology"
+            title="Semi Automatic Reagents"
             subtitle={`${merilSemiProducts.length} products available`}
           />
           <div className="product-grid">
@@ -141,13 +140,13 @@ export default async function ShopPage() {
       {dynamicTechnoProducts.length > 0 ? (
         <section className="section">
           <SectionTitle
-            eyebrow="Dynamic Techno"
-            title="Dynamic Techno Medicals"
+            eyebrow="Wound Dressing"
+            title="Wound Dressing Products"
             subtitle={`${dynamicTechnoProducts.length} products available`}
           />
           <div className="product-grid">
             {dynamicTechnoProducts.map((item) => (
-              <article key={item.id} className="product-card dynamic-techno-card">
+              <article key={item.id} className="product-card wound-dressing-card">
                 {item.images[0] ? (
                   <img src={item.images[0]} alt={item.productDescription} className="db-medicine-image" />
                 ) : null}

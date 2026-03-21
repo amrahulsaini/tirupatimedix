@@ -35,44 +35,35 @@ export default async function Home() {
 
       <section className="container section">
         <SectionTitle
-          eyebrow="Ostomy Care"
+          eyebrow="Medical Supplies"
           title="Explore By Category"
-          subtitle="Browse our complete range of ostomy care and diagnostic products."
+          subtitle="Browse our complete range of ostomy care, pathology, and wound dressing products."
         />
         <div className="category-showcase">
-          <Link href="/shop/hollister" className="showcase-card">
+          <Link href="/shop/ostomy-care" className="showcase-card">
             <div className="showcase-card__image">
-              <img src="/hollister-cat.webp" alt="Hollister Ostomy Care" />
+              <img src="/ostomy-care-cat.webp" alt="Ostomy Care Products" />
             </div>
             <div className="showcase-card__label">
-              <span>Hollister</span>
+              <span>Ostomy Care</span>
               <span className="showcase-card__arrow">&rarr;</span>
             </div>
           </Link>
-          <Link href="/shop/meril-fully-automatic" className="showcase-card">
+          <Link href="/shop/pathology-products" className="showcase-card">
             <div className="showcase-card__image">
-              <img src="/meril-fully-auto-cat.webp" alt="Meril Fully Automatic" />
+              <img src="/pathology-products-cat.webp" alt="Pathology Products" />
             </div>
             <div className="showcase-card__label">
-              <span>Meril Fully Auto</span>
+              <span>Pathology Products</span>
               <span className="showcase-card__arrow">&rarr;</span>
             </div>
           </Link>
-          <Link href="/shop/meril-semi-automatic" className="showcase-card">
+          <Link href="/shop/wound-dressing" className="showcase-card">
             <div className="showcase-card__image">
-              <img src="/meril-semi-auto-cat.webp" alt="Meril Semi Automatic" />
+              <img src="/wound-dressing-cat.webp" alt="Wound Dressing Products" />
             </div>
             <div className="showcase-card__label">
-              <span>Meril Semi Auto</span>
-              <span className="showcase-card__arrow">&rarr;</span>
-            </div>
-          </Link>
-          <Link href="/shop/dynamic-techno" className="showcase-card">
-            <div className="showcase-card__image">
-              <img src="/dynamic-techno-cat.webp" alt="Dynamic Techno Medicals" />
-            </div>
-            <div className="showcase-card__label">
-              <span>Dynamic Techno</span>
+              <span>Wound Dressing</span>
               <span className="showcase-card__arrow">&rarr;</span>
             </div>
           </Link>
@@ -81,8 +72,8 @@ export default async function Home() {
 
       <section className="container section">
         <SectionTitle
-          eyebrow="Hollister"
-          title="Featured Hollister Selection"
+          eyebrow="Ostomy Care"
+          title="Featured Ostomy Care Products"
           subtitle="Essential picks with transparent pricing and quick-compare display."
         />
         <div className="product-grid">
@@ -104,14 +95,14 @@ export default async function Home() {
           ))}
         </div>
         <div className="view-all-row">
-          <Link className="btn btn-primary" href="/shop/hollister">View All Hollister Products</Link>
+          <Link className="btn btn-primary" href="/shop/ostomy-care">View All Ostomy Care Products</Link>
         </div>
       </section>
 
       <section className="container section">
         <SectionTitle
-          eyebrow="Meril Fully Automatic"
-          title="Featured Meril Fully Automatic"
+          eyebrow="Pathology"
+          title="Featured Pathology Products"
           subtitle="Precision-focused reagents curated for labs and hospital workflows."
         />
         <div className="product-grid">
@@ -129,21 +120,8 @@ export default async function Home() {
               </div>
             </article>
           ))}
-        </div>
-        <div className="view-all-row">
-          <Link className="btn btn-primary" href="/shop/meril-fully-automatic">View All Meril Fully Automatic Products</Link>
-        </div>
-      </section>
-
-      <section className="container section">
-        <SectionTitle
-          eyebrow="Meril Semi Automatic"
-          title="Featured Meril Semi Automatic"
-          subtitle="Reliable semi-automated reagents for clinical diagnostics."
-        />
-        <div className="product-grid">
           {topMerilSemi.map((item) => (
-            <article key={item.id} className="product-card meril-card meril-semi-card">
+            <article key={`semi-${item.id}`} className="product-card meril-card meril-semi-card">
               {item.images[0] ? (
                 <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
               ) : null}
@@ -158,19 +136,19 @@ export default async function Home() {
           ))}
         </div>
         <div className="view-all-row">
-          <Link className="btn btn-primary" href="/shop/meril-semi-automatic">View All Meril Semi Automatic Products</Link>
+          <Link className="btn btn-primary" href="/shop/pathology-products">View All Pathology Products</Link>
         </div>
       </section>
 
       <section className="container section">
         <SectionTitle
-          eyebrow="Dynamic Techno"
-          title="Featured Dynamic Techno Medicals"
-          subtitle="NewMom & Sego maternity and post-operative care products."
+          eyebrow="Wound Dressing"
+          title="Featured Wound Dressing Products"
+          subtitle="Sterizone, NewMom & Sego wound care and post-operative products."
         />
         <div className="product-grid">
           {topDynamicTechno.map((item) => (
-            <article key={item.id} className="product-card dynamic-techno-card">
+            <article key={item.id} className="product-card wound-dressing-card">
               {item.images[0] ? (
                 <img src={item.images[0]} alt={item.productDescription} className="db-medicine-image" />
               ) : null}
@@ -185,7 +163,7 @@ export default async function Home() {
           ))}
         </div>
         <div className="view-all-row">
-          <Link className="btn btn-primary" href="/shop/dynamic-techno">View All Dynamic Techno Products</Link>
+          <Link className="btn btn-primary" href="/shop/wound-dressing">View All Wound Dressing Products</Link>
         </div>
       </section>
 

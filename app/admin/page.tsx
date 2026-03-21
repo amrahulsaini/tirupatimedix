@@ -26,22 +26,22 @@ function getAdminActionMessage(action?: string, status?: string) {
   }
 
   const labels: Record<string, string> = {
-    "create-medicine": "Medicine added",
-    "update-medicine": "Medicine updated",
-    "delete-medicine": "Medicine deleted",
+    "create-medicine": "Ostomy Care product added",
+    "update-medicine": "Ostomy Care product updated",
+    "delete-medicine": "Ostomy Care product deleted",
     "delete-image": "Image removed",
-    "create-meril": "Meril product added",
-    "update-meril": "Meril product updated",
-    "delete-meril": "Meril product deleted",
-    "delete-meril-image": "Meril image removed",
-    "create-meril-semi": "Meril Semi-Auto product added",
-    "update-meril-semi": "Meril Semi-Auto product updated",
-    "delete-meril-semi": "Meril Semi-Auto product deleted",
-    "delete-meril-semi-image": "Meril Semi-Auto image removed",
-    "create-dynamic-techno": "Dynamic Techno product added",
-    "update-dynamic-techno": "Dynamic Techno product updated",
-    "delete-dynamic-techno": "Dynamic Techno product deleted",
-    "delete-dynamic-techno-image": "Dynamic Techno image removed",
+    "create-meril": "Pathology (Fully Auto) product added",
+    "update-meril": "Pathology (Fully Auto) product updated",
+    "delete-meril": "Pathology (Fully Auto) product deleted",
+    "delete-meril-image": "Pathology (Fully Auto) image removed",
+    "create-meril-semi": "Pathology (Semi Auto) product added",
+    "update-meril-semi": "Pathology (Semi Auto) product updated",
+    "delete-meril-semi": "Pathology (Semi Auto) product deleted",
+    "delete-meril-semi-image": "Pathology (Semi Auto) image removed",
+    "create-dynamic-techno": "Wound Dressing product added",
+    "update-dynamic-techno": "Wound Dressing product updated",
+    "delete-dynamic-techno": "Wound Dressing product deleted",
+    "delete-dynamic-techno-image": "Wound Dressing image removed",
   };
 
   const label = labels[action] ?? "Action";
@@ -184,16 +184,16 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           <Filter size={14} /> All Categories
         </Link>
         <Link href="/admin?tab=hollister" className={`admin-tab${activeTab === "hollister" ? " admin-tab--active" : ""}`}>
-          Hollister ({medicines.length})
+          Ostomy Care ({medicines.length})
         </Link>
         <Link href="/admin?tab=meril-full" className={`admin-tab${activeTab === "meril-full" ? " admin-tab--active" : ""}`}>
-          Meril Fully Auto ({merilProducts.length})
+          Pathology – Fully Auto ({merilProducts.length})
         </Link>
         <Link href="/admin?tab=meril-semi" className={`admin-tab${activeTab === "meril-semi" ? " admin-tab--active" : ""}`}>
-          Meril Semi Auto ({merilSemiProducts.length})
+          Pathology – Semi Auto ({merilSemiProducts.length})
         </Link>
         <Link href="/admin?tab=dynamic-techno" className={`admin-tab${activeTab === "dynamic-techno" ? " admin-tab--active" : ""}`}>
-          Dynamic Techno ({dynamicTechnoProducts.length})
+          Wound Dressing ({dynamicTechnoProducts.length})
         </Link>
       </nav>
 
@@ -347,7 +347,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
       {(activeTab === "all" || activeTab === "meril-full") && (<>
       <section className="info-card">
-        <h2>Add New Meril Fully Automatic Product</h2>
+        <h2>Add New Pathology (Fully Auto) Product</h2>
         <form action="/admin/mutate" method="post" className="admin-grid-form">
           <input type="hidden" name="op" value="create-meril" />
           <label>
@@ -379,7 +379,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <input name="gst" defaultValue="5%" required />
           </label>
           <button type="submit" className="btn btn-primary admin-span-2">
-            <Plus size={16} /> Add Meril Product
+            <Plus size={16} /> Add Pathology Product
           </button>
         </form>
       </section>
@@ -439,12 +439,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 <input name="gst" defaultValue={item.gst} required />
               </label>
               <button type="submit" className="btn btn-primary admin-span-2">
-                <Save size={16} /> Save Meril Product
+                <Save size={16} /> Save Pathology Product
               </button>
             </form>
 
             <div className="admin-images-block">
-              <h4>Meril Images</h4>
+              <h4>Pathology (Fully Auto) Images</h4>
               <AdminImageUploadForm entityId={item.id} target="meril" />
 
               <div className="admin-image-grid">
@@ -474,7 +474,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
       {(activeTab === "all" || activeTab === "meril-semi") && (<>
       <section className="info-card admin-section-divider">
-        <h2>Add New Meril Semi-Automatic Product</h2>
+        <h2>Add New Pathology (Semi Auto) Product</h2>
         <form action="/admin/mutate" method="post" className="admin-grid-form">
           <input type="hidden" name="op" value="create-meril-semi" />
           <label>
@@ -572,7 +572,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             </form>
 
             <div className="admin-images-block">
-              <h4>Semi-Auto Images</h4>
+              <h4>Pathology (Semi Auto) Images</h4>
               <AdminImageUploadForm entityId={item.id} target="meril-semi" />
 
               <div className="admin-image-grid">
@@ -602,7 +602,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
       {(activeTab === "all" || activeTab === "dynamic-techno") && (<>
       <section className="info-card admin-section-divider">
-        <h2>Add New Dynamic Techno Product</h2>
+        <h2>Add New Wound Dressing Product</h2>
         <form action="/admin/mutate" method="post" className="admin-grid-form">
           <input type="hidden" name="op" value="create-dynamic-techno" />
           <label>
@@ -634,7 +634,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <input name="cut_price" type="number" min={0} step="0.01" required />
           </label>
           <button type="submit" className="btn btn-primary admin-span-2">
-            <Plus size={16} /> Add Dynamic Techno Product
+            <Plus size={16} /> Add Wound Dressing Product
           </button>
         </form>
       </section>
@@ -645,7 +645,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <div className="admin-card-head">
               <h3>
                 {item.productDescription} <span className="pill">Code: {item.itemCode}</span>
-                <span className="pill pill--dynamic">Dynamic Techno</span>
+                <span className="pill pill--wound">Wound Dressing</span>
               </h3>
               <form action="/admin/mutate" method="post">
                 <input type="hidden" name="op" value="delete-dynamic-techno" />
@@ -688,12 +688,12 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 <input name="cut_price" type="number" min={0} step="0.01" defaultValue={item.cutPrice} required />
               </label>
               <button type="submit" className="btn btn-primary admin-span-2">
-                <Save size={16} /> Save Dynamic Techno Product
+                <Save size={16} /> Save Wound Dressing Product
               </button>
             </form>
 
             <div className="admin-images-block">
-              <h4>Dynamic Techno Images</h4>
+              <h4>Wound Dressing Images</h4>
               <AdminImageUploadForm entityId={item.id} target="dynamic-techno" />
 
               <div className="admin-image-grid">

@@ -11,25 +11,20 @@ import { getAllDynamicTechnoProducts } from "@/lib/dynamic-techno";
 export const dynamic = "force-dynamic";
 
 const CATEGORY_META: Record<string, { title: string; eyebrow: string; description: string }> = {
-  hollister: {
-    title: "Hollister Products",
-    eyebrow: "Hollister",
-    description: "Browse all Hollister ostomy care products with transparent pricing.",
+  "ostomy-care": {
+    title: "Ostomy Care Products",
+    eyebrow: "Ostomy Care",
+    description: "Browse all ostomy care products with transparent pricing.",
   },
-  "meril-fully-automatic": {
-    title: "Meril Fully Automatic Products",
-    eyebrow: "Meril",
-    description: "Precision-focused fully automatic reagents for labs and hospitals.",
+  "pathology-products": {
+    title: "Pathology Products",
+    eyebrow: "Pathology",
+    description: "Fully automatic and semi-automatic reagents for labs and hospitals.",
   },
-  "meril-semi-automatic": {
-    title: "Meril Semi Automatic Products",
-    eyebrow: "Meril",
-    description: "Reliable semi-automated reagents for clinical diagnostics.",
-  },
-  "dynamic-techno": {
-    title: "Dynamic Techno Medicals",
-    eyebrow: "Dynamic Techno",
-    description: "Browse NewMom & Sego maternity and post-operative care products.",
+  "wound-dressing": {
+    title: "Wound Dressing Products",
+    eyebrow: "Wound Dressing",
+    description: "Sterizone, NewMom & Sego wound care and post-operative products.",
   },
 };
 
@@ -72,20 +67,19 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </div>
       </nav>
 
-      {category === "hollister" && <HollisterSection />}
-      {category === "meril-fully-automatic" && <MerilFullSection />}
-      {category === "meril-semi-automatic" && <MerilSemiSection />}
-      {category === "dynamic-techno" && <DynamicTechnoSection />}
+      {category === "ostomy-care" && <OstomyCareSection />}
+      {category === "pathology-products" && <PathologySection />}
+      {category === "wound-dressing" && <WoundDressingSection />}
     </div>
   );
 }
 
-async function HollisterSection() {
+async function OstomyCareSection() {
   const medicines = await getAllMedicines().catch(() => []);
   if (medicines.length === 0) {
     return (
       <section className="section info-card">
-        <h2>No Hollister products found</h2>
+        <h2>No Ostomy Care products found</h2>
         <p className="muted">Check back soon or try another category.</p>
       </section>
     );
@@ -100,7 +94,7 @@ async function HollisterSection() {
         return (
           <section className="section" key={cat}>
             <SectionTitle
-              eyebrow="Hollister"
+              eyebrow="Ostomy Care"
               title={cat}
               subtitle={`${items.length} products available`}
             />
@@ -130,88 +124,84 @@ async function HollisterSection() {
   );
 }
 
-async function MerilFullSection() {
-  const products = await getAllMerilProducts().catch(() => []);
-  if (products.length === 0) {
+async function PathologySection() {
+  const [fullProducts, semiProducts] = await Promise.all([
+    getAllMerilProducts().catch(() => []),
+    getAllMerilSemiProducts().catch(() => []),
+  ]);
+
+  if (fullProducts.length === 0 && semiProducts.length === 0) {
     return (
       <section className="section info-card">
-        <h2>No Meril Fully Automatic products found</h2>
+        <h2>No Pathology products found</h2>
         <p className="muted">Check back soon or try another category.</p>
       </section>
     );
   }
 
   return (
-    <section className="section">
-      <SectionTitle
-        eyebrow="Meril"
-        title="Meril Fully Automatic"
-        subtitle={`${products.length} products available`}
-      />
-      <div className="product-grid">
-        {products.map((item) => (
-          <article key={item.id} className="product-card meril-card">
-            {item.images[0] ? (
-              <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
-            ) : null}
-            <h3>{item.productName} – {item.srNo}</h3>
-            <p className="muted">Pack Size: {item.packSize}</p>
-            <div className="price-row">
-              <strong>₹{item.cutPrice.toFixed(2)}</strong>
-              <span>₹{item.mrpUnits.toFixed(2)}</span>
-              <em>Best Price</em>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
+    <>
+      {fullProducts.length > 0 && (
+        <section className="section">
+          <SectionTitle
+            eyebrow="Pathology"
+            title="Fully Automatic Reagents"
+            subtitle={`${fullProducts.length} products available`}
+          />
+          <div className="product-grid">
+            {fullProducts.map((item) => (
+              <article key={item.id} className="product-card meril-card">
+                {item.images[0] ? (
+                  <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
+                ) : null}
+                <h3>{item.productName} – {item.srNo}</h3>
+                <p className="muted">Pack Size: {item.packSize}</p>
+                <div className="price-row">
+                  <strong>₹{item.cutPrice.toFixed(2)}</strong>
+                  <span>₹{item.mrpUnits.toFixed(2)}</span>
+                  <em>Best Price</em>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {semiProducts.length > 0 && (
+        <section className="section">
+          <SectionTitle
+            eyebrow="Pathology"
+            title="Semi Automatic Reagents"
+            subtitle={`${semiProducts.length} products available`}
+          />
+          <div className="product-grid">
+            {semiProducts.map((item) => (
+              <article key={`semi-${item.id}`} className="product-card meril-card meril-semi-card">
+                {item.images[0] ? (
+                  <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
+                ) : null}
+                <h3>{item.productName} – {item.srNo}</h3>
+                <p className="muted">Pack Size: {item.packSize}</p>
+                <div className="price-row">
+                  <strong>₹{item.cutPrice.toFixed(2)}</strong>
+                  <span>₹{item.mrpUnits.toFixed(2)}</span>
+                  <em>Best Price</em>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+    </>
   );
 }
 
-async function MerilSemiSection() {
-  const products = await getAllMerilSemiProducts().catch(() => []);
-  if (products.length === 0) {
-    return (
-      <section className="section info-card">
-        <h2>No Meril Semi Automatic products found</h2>
-        <p className="muted">Check back soon or try another category.</p>
-      </section>
-    );
-  }
-
-  return (
-    <section className="section">
-      <SectionTitle
-        eyebrow="Meril"
-        title="Meril Semi Automatic"
-        subtitle={`${products.length} products available`}
-      />
-      <div className="product-grid">
-        {products.map((item) => (
-          <article key={item.id} className="product-card meril-card meril-semi-card">
-            {item.images[0] ? (
-              <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
-            ) : null}
-            <h3>{item.productName} – {item.srNo}</h3>
-            <p className="muted">Pack Size: {item.packSize}</p>
-            <div className="price-row">
-              <strong>₹{item.cutPrice.toFixed(2)}</strong>
-              <span>₹{item.mrpUnits.toFixed(2)}</span>
-              <em>Best Price</em>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-async function DynamicTechnoSection() {
+async function WoundDressingSection() {
   const products = await getAllDynamicTechnoProducts().catch(() => []);
   if (products.length === 0) {
     return (
       <section className="section info-card">
-        <h2>No Dynamic Techno Medicals products found</h2>
+        <h2>No Wound Dressing products found</h2>
         <p className="muted">Check back soon or try another category.</p>
       </section>
     );
@@ -220,13 +210,13 @@ async function DynamicTechnoSection() {
   return (
     <section className="section">
       <SectionTitle
-        eyebrow="Dynamic Techno"
-        title="Dynamic Techno Medicals"
+        eyebrow="Wound Dressing"
+        title="Wound Dressing Products"
         subtitle={`${products.length} products available`}
       />
       <div className="product-grid">
         {products.map((item) => (
-          <article key={item.id} className="product-card dynamic-techno-card">
+          <article key={item.id} className="product-card wound-dressing-card">
             {item.images[0] ? (
               <img src={item.images[0]} alt={item.productDescription} className="db-medicine-image" />
             ) : null}
