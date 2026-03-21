@@ -24,9 +24,9 @@ export default async function Home() {
     <div className="landing-page">
       <section className="home-banner-full">
         <picture>
-          <source media="(max-width: 768px)" srcSet="/tirupati-banner-mobile.png" />
+          <source media="(max-width: 768px)" srcSet="/mobile-banner.webp" />
           <img
-            src="/tirupati-medix-banner-desktop.webp"
+            src="/desktop-banner.webp"
             alt="Tirupati Medix Banner"
             className="home-banner__image"
           />
