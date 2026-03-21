@@ -39,39 +39,43 @@ export default async function Home() {
           title="Explore By Category"
           subtitle="Browse our complete range of ostomy care and diagnostic products."
         />
-        <div className="category-grid">
-          <article className="category-card">
-            <div className="category-card__media">
-              <img src="/hollister-cat.webp" alt="Hollister category" />
+        <div className="category-showcase">
+          <Link href="/shop/hollister" className="showcase-card">
+            <div className="showcase-card__image">
+              <img src="/hollister-cat.webp" alt="Hollister Ostomy Care" />
             </div>
-            <h3>Hollister</h3>
-            <p>{medicines.length} products available</p>
-            <Link href="/shop/hollister">Explore</Link>
-          </article>
-          <article className="category-card">
-            <div className="category-card__media">
-              <img src="/meril-fully-auto-cat.webp" alt="Meril Fully Automatic category" />
+            <div className="showcase-card__label">
+              <span>Hollister</span>
+              <span className="showcase-card__arrow">&rarr;</span>
             </div>
-            <h3>Meril Fully Automatic</h3>
-            <p>{merilProducts.length} products available</p>
-            <Link href="/shop/meril-fully-automatic">Explore</Link>
-          </article>
-          <article className="category-card">
-            <div className="category-card__media">
-              <img src="/meril-semi-auto-cat.webp" alt="Meril Semi Automatic category" />
+          </Link>
+          <Link href="/shop/meril-fully-automatic" className="showcase-card">
+            <div className="showcase-card__image">
+              <img src="/meril-fully-auto-cat.webp" alt="Meril Fully Automatic" />
             </div>
-            <h3>Meril Semi Automatic</h3>
-            <p>{merilSemiProducts.length} products available</p>
-            <Link href="/shop/meril-semi-automatic">Explore</Link>
-          </article>
-          <article className="category-card">
-            <div className="category-card__media">
-              <img src="/dynamic-techno-cat.webp" alt="Dynamic Techno Medicals category" />
+            <div className="showcase-card__label">
+              <span>Meril Fully Auto</span>
+              <span className="showcase-card__arrow">&rarr;</span>
             </div>
-            <h3>Dynamic Techno Medicals</h3>
-            <p>{dynamicTechnoProducts.length} products available</p>
-            <Link href="/shop/dynamic-techno">Explore</Link>
-          </article>
+          </Link>
+          <Link href="/shop/meril-semi-automatic" className="showcase-card">
+            <div className="showcase-card__image">
+              <img src="/meril-semi-auto-cat.webp" alt="Meril Semi Automatic" />
+            </div>
+            <div className="showcase-card__label">
+              <span>Meril Semi Auto</span>
+              <span className="showcase-card__arrow">&rarr;</span>
+            </div>
+          </Link>
+          <Link href="/shop/dynamic-techno" className="showcase-card">
+            <div className="showcase-card__image">
+              <img src="/dynamic-techno-cat.webp" alt="Dynamic Techno Medicals" />
+            </div>
+            <div className="showcase-card__label">
+              <span>Dynamic Techno</span>
+              <span className="showcase-card__arrow">&rarr;</span>
+            </div>
+          </Link>
         </div>
       </section>
 
