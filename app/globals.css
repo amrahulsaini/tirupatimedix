@@ -408,15 +408,23 @@ a {
 .home-banner-full {
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  background: radial-gradient(circle at 20% 20%, rgba(22, 98, 73, 0.14), transparent 55%), #f4f8f5;
+  display: flex;
+  justify-content: center;
+  background: #f4f8f5;
+}
+
+.home-banner-full picture {
+  width: min(100vw, 1980px);
+  display: block;
 }
 
 .home-banner__image {
   width: 100%;
-  height: clamp(170px, 24vw, 300px);
+  height: auto;
+  aspect-ratio: 1980 / 1024;
   display: block;
-  object-fit: contain;
-  object-position: top center;
+  object-fit: cover;
+  object-position: center;
   border-radius: 0;
 }
 
@@ -1019,6 +1027,16 @@ textarea:focus {
 }
 
 @media (max-width: 720px) {
+  .home-banner-full picture {
+    width: 100vw;
+  }
+
+  .home-banner__image {
+    aspect-ratio: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
   .top-strip {
     display: block;
   }
