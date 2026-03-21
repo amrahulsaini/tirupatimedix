@@ -14,6 +14,8 @@ export default async function Home() {
   const topHollister = medicines.slice(0, 6);
   const topMeril = merilProducts.slice(0, 6);
   const totalProducts = medicines.length + merilProducts.length;
+  const firstMedicineImage = medicines.find((item) => item.images[0])?.images[0] ?? "/tirupati-medix-logo.webp";
+  const secondMedicineImage = medicines.find((item, index) => index > 0 && item.images[0])?.images[0] ?? firstMedicineImage;
 
   return (
     <div className="landing-page">
@@ -30,22 +32,31 @@ export default async function Home() {
 
       <section className="container section">
         <SectionTitle
-          eyebrow="Ostomy Care Categories"
-          title="Specialized Categories"
-          subtitle="Both primary catalogs are included in one managed storefront flow."
+          eyebrow="Catalog Paths"
+          title="Explore By Category"
+          subtitle="Handpicked category entrances to quickly browse products and pricing."
         />
         <div className="category-grid">
           <article className="category-card">
+            <div className="category-card__media">
+              <img src={firstMedicineImage} alt="Hollister category preview" />
+            </div>
             <h3>Hollister</h3>
             <p>{medicines.length} products currently available.</p>
             <Link href="/shop">Explore</Link>
           </article>
           <article className="category-card">
+            <div className="category-card__media">
+              <img src={secondMedicineImage} alt="Meril category preview" />
+            </div>
             <h3>Meril Fully Automatic</h3>
             <p>{merilProducts.length} products currently available.</p>
             <Link href="/shop">Explore</Link>
           </article>
           <article className="category-card">
+            <div className="category-card__media">
+              <img src={firstMedicineImage} alt="Unified catalog preview" />
+            </div>
             <h3>Unified Ostomy Care View</h3>
             <p>Single storefront view with MRP strike-through and final cut price.</p>
             <Link href="/shop">Open Catalog</Link>
@@ -56,8 +67,8 @@ export default async function Home() {
       <section className="container section">
         <SectionTitle
           eyebrow="Hollister"
-          title="Hollister Product Highlights"
-          subtitle="Code and generic name with best price and MRP details."
+          title="Featured Hollister Selection"
+          subtitle="Essential picks with transparent pricing and quick-compare display."
         />
         <div className="product-grid">
           {topHollister.map((item) => (
@@ -83,8 +94,8 @@ export default async function Home() {
       <section className="container section">
         <SectionTitle
           eyebrow="Meril"
-          title="Meril Fully Automatic Highlights"
-          subtitle="Product name and pack size with final cut pricing."
+          title="Featured Meril Selection"
+          subtitle="Precision-focused devices curated for clinics and hospital workflows."
         />
         <div className="product-grid">
           {topMeril.map((item) => (
