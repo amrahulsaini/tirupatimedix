@@ -4,6 +4,7 @@ import { SectionTitle } from "@/app/_components/section-title";
 import { getAllMerilProducts } from "@/lib/meril";
 import { getAllMerilSemiProducts } from "@/lib/meril-semi";
 import { getAllMedicines } from "@/lib/medicines";
+import { getAllDynamicTechnoProducts } from "@/lib/dynamic-techno";
 
 export const dynamic = "force-dynamic";
 
@@ -11,19 +12,13 @@ export default async function Home() {
   const medicines = await getAllMedicines().catch(() => []);
   const merilProducts = await getAllMerilProducts().catch(() => []);
   const merilSemiProducts = await getAllMerilSemiProducts().catch(() => []);
+  const dynamicTechnoProducts = await getAllDynamicTechnoProducts().catch(() => []);
 
   const topHollister = medicines.slice(0, 6);
   const topMeril = merilProducts.slice(0, 6);
   const topMerilSemi = merilSemiProducts.slice(0, 6);
-  const totalProducts = medicines.length + merilProducts.length + merilSemiProducts.length;
-  const firstMedicineImage = medicines.find((item) => item.images[0])?.images[0] ?? "/tirupati-medix-logo.webp";
-  const merilCategoryImage =
-    merilProducts.find((item) => item.images[0])?.images[0] ??
-    medicines.find(
-      (item) => item.images[0] && item.category.toLowerCase().includes("meril")
-    )?.images[0] ?? null;
-  const merilSemiCategoryImage =
-    merilSemiProducts.find((item) => item.images[0])?.images[0] ?? null;
+  const topDynamicTechno = dynamicTechnoProducts.slice(0, 6);
+  const totalProducts = medicines.length + merilProducts.length + merilSemiProducts.length + dynamicTechnoProducts.length;
 
   return (
     <div className="landing-page">
@@ -47,39 +42,35 @@ export default async function Home() {
         <div className="category-grid">
           <article className="category-card">
             <div className="category-card__media">
-              <img src={firstMedicineImage} alt="Hollister category preview" />
+              <img src="/hollister-cat.webp" alt="Hollister category" />
             </div>
             <h3>Hollister</h3>
             <p>{medicines.length} products available</p>
-            <Link href="/shop?category=hollister">Explore</Link>
+            <Link href="/shop/hollister">Explore</Link>
           </article>
           <article className="category-card">
-            {merilCategoryImage ? (
-              <div className="category-card__media">
-                <img src={merilCategoryImage} alt="Meril Fully Automatic preview" />
-              </div>
-            ) : (
-              <div className="category-card__media category-card__media--placeholder">
-                <span>Meril</span>
-              </div>
-            )}
+            <div className="category-card__media">
+              <img src="/meril-fully-auto-cat.webp" alt="Meril Fully Automatic category" />
+            </div>
             <h3>Meril Fully Automatic</h3>
             <p>{merilProducts.length} products available</p>
-            <Link href="/shop?category=meril-fully-automatic">Explore</Link>
+            <Link href="/shop/meril-fully-automatic">Explore</Link>
           </article>
           <article className="category-card">
-            {merilSemiCategoryImage ? (
-              <div className="category-card__media">
-                <img src={merilSemiCategoryImage} alt="Meril Semi Automatic preview" />
-              </div>
-            ) : (
-              <div className="category-card__media category-card__media--placeholder">
-                <span>Meril Semi</span>
-              </div>
-            )}
+            <div className="category-card__media">
+              <img src="/meril-semi-auto-cat.webp" alt="Meril Semi Automatic category" />
+            </div>
             <h3>Meril Semi Automatic</h3>
             <p>{merilSemiProducts.length} products available</p>
-            <Link href="/shop?category=meril-semi-automatic">Explore</Link>
+            <Link href="/shop/meril-semi-automatic">Explore</Link>
+          </article>
+          <article className="category-card">
+            <div className="category-card__media">
+              <img src="/dynamic-techno-cat.webp" alt="Dynamic Techno Medicals category" />
+            </div>
+            <h3>Dynamic Techno Medicals</h3>
+            <p>{dynamicTechnoProducts.length} products available</p>
+            <Link href="/shop/dynamic-techno">Explore</Link>
           </article>
         </div>
       </section>
@@ -94,23 +85,22 @@ export default async function Home() {
           {topHollister.map((item) => (
             <article key={item.id} className="product-card">
               <div className="product-card__badge-row">
-                <span className="pill">Code: {item.code}</span>
                 <span className="stock stock--ok">Pack: {item.packingPerBox}</span>
               </div>
               {item.images[0] ? (
                 <img src={item.images[0]} alt={item.genericName} className="db-medicine-image" />
               ) : null}
-              <h3>{item.genericName}</h3>
+              <h3>{item.genericName} – {item.code}</h3>
               <div className="price-row">
-                <strong>Rs. {item.cutPrice.toFixed(2)}</strong>
-                <span>Rs. {item.mrpUnits.toFixed(2)}</span>
+                <strong>₹{item.cutPrice.toFixed(2)}</strong>
+                <span>₹{item.mrpUnits.toFixed(2)}</span>
                 <em>Best Price</em>
               </div>
             </article>
           ))}
         </div>
         <div className="view-all-row">
-          <Link className="btn btn-primary" href="/shop?category=hollister">View All Hollister Products</Link>
+          <Link className="btn btn-primary" href="/shop/hollister">View All Hollister Products</Link>
         </div>
       </section>
 
@@ -126,18 +116,18 @@ export default async function Home() {
               {item.images[0] ? (
                 <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
               ) : null}
-              <h3>{item.productName}</h3>
+              <h3>{item.productName} – {item.srNo}</h3>
               <p className="muted">Pack Size: {item.packSize}</p>
               <div className="price-row">
-                <strong>Rs. {item.cutPrice.toFixed(2)}</strong>
-                <span>Rs. {item.mrpUnits.toFixed(2)}</span>
+                <strong>₹{item.cutPrice.toFixed(2)}</strong>
+                <span>₹{item.mrpUnits.toFixed(2)}</span>
                 <em>Best Price</em>
               </div>
             </article>
           ))}
         </div>
         <div className="view-all-row">
-          <Link className="btn btn-primary" href="/shop?category=meril-fully-automatic">View All Meril Fully Automatic Products</Link>
+          <Link className="btn btn-primary" href="/shop/meril-fully-automatic">View All Meril Fully Automatic Products</Link>
         </div>
       </section>
 
@@ -153,18 +143,45 @@ export default async function Home() {
               {item.images[0] ? (
                 <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
               ) : null}
-              <h3>{item.productName}</h3>
+              <h3>{item.productName} – {item.srNo}</h3>
               <p className="muted">Pack Size: {item.packSize}</p>
               <div className="price-row">
-                <strong>Rs. {item.cutPrice.toFixed(2)}</strong>
-                <span>Rs. {item.mrpUnits.toFixed(2)}</span>
+                <strong>₹{item.cutPrice.toFixed(2)}</strong>
+                <span>₹{item.mrpUnits.toFixed(2)}</span>
                 <em>Best Price</em>
               </div>
             </article>
           ))}
         </div>
         <div className="view-all-row">
-          <Link className="btn btn-primary" href="/shop?category=meril-semi-automatic">View All Meril Semi Automatic Products</Link>
+          <Link className="btn btn-primary" href="/shop/meril-semi-automatic">View All Meril Semi Automatic Products</Link>
+        </div>
+      </section>
+
+      <section className="container section">
+        <SectionTitle
+          eyebrow="Dynamic Techno"
+          title="Featured Dynamic Techno Medicals"
+          subtitle="NewMom & Sego maternity and post-operative care products."
+        />
+        <div className="product-grid">
+          {topDynamicTechno.map((item) => (
+            <article key={item.id} className="product-card dynamic-techno-card">
+              {item.images[0] ? (
+                <img src={item.images[0]} alt={item.productDescription} className="db-medicine-image" />
+              ) : null}
+              <h3>{item.productDescription} – {item.itemCode}</h3>
+              <p className="muted">{item.brandName} · Size: {item.size}</p>
+              <div className="price-row">
+                <strong>₹{item.cutPrice.toFixed(2)}</strong>
+                <span>₹{item.mrp.toFixed(2)}</span>
+                <em>Best Price</em>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="view-all-row">
+          <Link className="btn btn-primary" href="/shop/dynamic-techno">View All Dynamic Techno Products</Link>
         </div>
       </section>
 

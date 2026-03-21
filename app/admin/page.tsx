@@ -7,6 +7,7 @@ import { AdminImageUploadForm } from "@/app/admin/_components/admin-image-upload
 import { getAllMerilProducts } from "@/lib/meril";
 import { getAllMerilSemiProducts } from "@/lib/meril-semi";
 import { getAllMedicines } from "@/lib/medicines";
+import { getAllDynamicTechnoProducts } from "@/lib/dynamic-techno";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,10 @@ function getAdminActionMessage(action?: string, status?: string) {
     "update-meril-semi": "Meril Semi-Auto product updated",
     "delete-meril-semi": "Meril Semi-Auto product deleted",
     "delete-meril-semi-image": "Meril Semi-Auto image removed",
+    "create-dynamic-techno": "Dynamic Techno product added",
+    "update-dynamic-techno": "Dynamic Techno product updated",
+    "delete-dynamic-techno": "Dynamic Techno product deleted",
+    "delete-dynamic-techno-image": "Dynamic Techno image removed",
   };
 
   const label = labels[action] ?? "Action";
@@ -99,19 +104,22 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   let medicines = [] as Awaited<ReturnType<typeof getAllMedicines>>;
   let merilProducts = [] as Awaited<ReturnType<typeof getAllMerilProducts>>;
   let merilSemiProducts = [] as Awaited<ReturnType<typeof getAllMerilSemiProducts>>;
+  let dynamicTechnoProducts = [] as Awaited<ReturnType<typeof getAllDynamicTechnoProducts>>;
   let dataLoadFailed = false;
 
   try {
-    const [medicinesResult, merilResult, merilSemiResult] = await Promise.allSettled([
+    const [medicinesResult, merilResult, merilSemiResult, dynamicTechnoResult] = await Promise.allSettled([
       getAllMedicines(),
       getAllMerilProducts(),
       getAllMerilSemiProducts(),
+      getAllDynamicTechnoProducts(),
     ]);
 
     medicines = medicinesResult.status === "fulfilled" ? medicinesResult.value : [];
     merilProducts = merilResult.status === "fulfilled" ? merilResult.value : [];
     merilSemiProducts = merilSemiResult.status === "fulfilled" ? merilSemiResult.value : [];
-    dataLoadFailed = medicinesResult.status === "rejected" || merilResult.status === "rejected" || merilSemiResult.status === "rejected";
+    dynamicTechnoProducts = dynamicTechnoResult.status === "fulfilled" ? dynamicTechnoResult.value : [];
+    dataLoadFailed = medicinesResult.status === "rejected" || merilResult.status === "rejected" || merilSemiResult.status === "rejected" || dynamicTechnoResult.status === "rejected";
   } catch {
     dataLoadFailed = true;
   }
@@ -183,6 +191,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         </Link>
         <Link href="/admin?tab=meril-semi" className={`admin-tab${activeTab === "meril-semi" ? " admin-tab--active" : ""}`}>
           Meril Semi Auto ({merilSemiProducts.length})
+        </Link>
+        <Link href="/admin?tab=dynamic-techno" className={`admin-tab${activeTab === "dynamic-techno" ? " admin-tab--active" : ""}`}>
+          Dynamic Techno ({dynamicTechnoProducts.length})
         </Link>
       </nav>
 
@@ -573,6 +584,127 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                       <img src={image.path} alt={`${item.productName} ${index + 1}`} />
                       <form action="/admin/mutate" method="post">
                         <input type="hidden" name="op" value="delete-meril-semi-image" />
+                        <input type="hidden" name="image_id" value={image.id} />
+                        <input type="hidden" name="image_path" value={image.path} />
+                        <button type="submit" className="btn btn-secondary">
+                          Remove
+                        </button>
+                      </form>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+      </>)}
+
+      {(activeTab === "all" || activeTab === "dynamic-techno") && (<>
+      <section className="info-card admin-section-divider">
+        <h2>Add New Dynamic Techno Product</h2>
+        <form action="/admin/mutate" method="post" className="admin-grid-form">
+          <input type="hidden" name="op" value="create-dynamic-techno" />
+          <label>
+            Item Code
+            <input name="item_code" required />
+          </label>
+          <label>
+            Brand Name
+            <input name="brand_name" required />
+          </label>
+          <label className="admin-span-2">
+            Product Description
+            <input name="product_description" required />
+          </label>
+          <label>
+            Size
+            <input name="size" required />
+          </label>
+          <label>
+            UOM
+            <input name="uom" required />
+          </label>
+          <label>
+            MRP
+            <input name="mrp" type="number" min={0} step="0.01" required />
+          </label>
+          <label>
+            Cut Price
+            <input name="cut_price" type="number" min={0} step="0.01" required />
+          </label>
+          <button type="submit" className="btn btn-primary admin-span-2">
+            <Plus size={16} /> Add Dynamic Techno Product
+          </button>
+        </form>
+      </section>
+
+      <section className="admin-medicine-list">
+        {dynamicTechnoProducts.map((item) => (
+          <article key={item.id} className="info-card admin-medicine-card">
+            <div className="admin-card-head">
+              <h3>
+                {item.productDescription} <span className="pill">Code: {item.itemCode}</span>
+                <span className="pill pill--dynamic">Dynamic Techno</span>
+              </h3>
+              <form action="/admin/mutate" method="post">
+                <input type="hidden" name="op" value="delete-dynamic-techno" />
+                <input type="hidden" name="id" value={item.id} />
+                <button type="submit" className="btn btn-secondary">
+                  <Trash2 size={16} /> Delete
+                </button>
+              </form>
+            </div>
+
+            <form action="/admin/mutate" method="post" className="admin-grid-form">
+              <input type="hidden" name="op" value="update-dynamic-techno" />
+              <input type="hidden" name="id" value={item.id} />
+              <label>
+                Item Code
+                <input name="item_code" defaultValue={item.itemCode} required />
+              </label>
+              <label>
+                Brand Name
+                <input name="brand_name" defaultValue={item.brandName} required />
+              </label>
+              <label className="admin-span-2">
+                Product Description
+                <input name="product_description" defaultValue={item.productDescription} required />
+              </label>
+              <label>
+                Size
+                <input name="size" defaultValue={item.size} required />
+              </label>
+              <label>
+                UOM
+                <input name="uom" defaultValue={item.uom} required />
+              </label>
+              <label>
+                MRP
+                <input name="mrp" type="number" min={0} step="0.01" defaultValue={item.mrp} required />
+              </label>
+              <label>
+                Cut Price
+                <input name="cut_price" type="number" min={0} step="0.01" defaultValue={item.cutPrice} required />
+              </label>
+              <button type="submit" className="btn btn-primary admin-span-2">
+                <Save size={16} /> Save Dynamic Techno Product
+              </button>
+            </form>
+
+            <div className="admin-images-block">
+              <h4>Dynamic Techno Images</h4>
+              <AdminImageUploadForm entityId={item.id} target="dynamic-techno" />
+
+              <div className="admin-image-grid">
+                {item.imageItems.length === 0 ? (
+                  <p className="muted">No images uploaded yet.</p>
+                ) : (
+                  item.imageItems.map((image, index) => (
+                    <div key={image.id} className="admin-image-item">
+                      <img src={image.path} alt={`${item.productDescription} ${index + 1}`} />
+                      <form action="/admin/mutate" method="post">
+                        <input type="hidden" name="op" value="delete-dynamic-techno-image" />
                         <input type="hidden" name="image_id" value={image.id} />
                         <input type="hidden" name="image_path" value={image.path} />
                         <button type="submit" className="btn btn-secondary">

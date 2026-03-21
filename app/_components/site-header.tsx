@@ -14,7 +14,7 @@ const navLinks = [
 ];
 
 const announcements = [
-  "Free Shipping above Rs. 400",
+  "Free Shipping above ₹2000",
   "Delivery in 4 to 5 days",
   "100% genuine medical products",
   "Need help? Talk to a pharmacist at Contact",

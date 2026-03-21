@@ -86,6 +86,30 @@ export async function ensureDatabaseSchema() {
     )`
   );
 
+  await dbQuery(
+    `CREATE TABLE IF NOT EXISTS dynamic_techno (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      item_code VARCHAR(50) NOT NULL,
+      brand_name VARCHAR(100) NOT NULL,
+      product_description VARCHAR(255) NOT NULL,
+      size VARCHAR(50) NOT NULL,
+      uom VARCHAR(50) NOT NULL,
+      mrp DECIMAL(10, 2) NOT NULL,
+      cut_price DECIMAL(10, 2) NOT NULL
+    )`
+  );
+
+  await dbQuery(
+    `CREATE TABLE IF NOT EXISTS dynamic_techno_product_images (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      dynamic_techno_product_id INT NOT NULL,
+      image_path VARCHAR(500) NOT NULL,
+      sort_order INT NOT NULL DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (dynamic_techno_product_id) REFERENCES dynamic_techno(id) ON DELETE CASCADE
+    )`
+  );
+
   // One-time cleanup: remove duplicate rows in meril_semi_automatic
   // caused by old INSERT IGNORE running without a unique key
   await dbQuery(

@@ -1064,6 +1064,17 @@ textarea:focus {
   color: #8b5e14;
 }
 
+/* --- Dynamic Techno Pill Badge --- */
+.pill--dynamic {
+  background: linear-gradient(120deg, #e8f0fe, #d2e3fc);
+  color: #1a56db;
+}
+
+/* --- Dynamic Techno Card Accent --- */
+.dynamic-techno-card {
+  border-left: 3px solid #1a56db;
+}
+
 /* --- Product Card GST tag --- */
 .gst-tag {
   font-size: 0.72rem;

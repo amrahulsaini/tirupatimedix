@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 
 type AdminImageUploadFormProps = {
   entityId: number;
-  target: "medicine" | "meril" | "meril-semi";
+  target: "medicine" | "meril" | "meril-semi" | "dynamic-techno";
 };
 
 type UploadStatus =
@@ -33,13 +33,17 @@ export function AdminImageUploadForm({ entityId, target }: AdminImageUploadFormP
       ? "/admin/upload-meril-images"
       : target === "meril-semi"
         ? "/admin/upload-meril-semi-images"
-        : "/admin/upload-images";
+        : target === "dynamic-techno"
+          ? "/admin/upload-dynamic-techno-images"
+          : "/admin/upload-images";
   const idField =
     target === "meril"
       ? "meril_id"
       : target === "meril-semi"
         ? "meril_semi_id"
-        : "medicine_id";
+        : target === "dynamic-techno"
+          ? "dynamic_techno_id"
+          : "medicine_id";
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

@@ -21,7 +21,11 @@ type Operation =
   | "create-meril-semi"
   | "update-meril-semi"
   | "delete-meril-semi"
-  | "delete-meril-semi-image";
+  | "delete-meril-semi-image"
+  | "create-dynamic-techno"
+  | "update-dynamic-techno"
+  | "delete-dynamic-techno"
+  | "delete-dynamic-techno-image";
 
 function toNumber(value: FormDataEntryValue | null) {
   const num = Number(value);
@@ -281,6 +285,79 @@ export async function POST(request: Request) {
         break;
       }
 
+      case "create-dynamic-techno": {
+        const itemCode = toText(formData.get("item_code"));
+        const brandName = toText(formData.get("brand_name"));
+        const productDescription = toText(formData.get("product_description"));
+        const size = toText(formData.get("size"));
+        const uom = toText(formData.get("uom"));
+        const mrp = toNumber(formData.get("mrp"));
+        const cutPrice = toNumber(formData.get("cut_price"));
+
+        if (!itemCode || !brandName || !productDescription || !size || !uom) {
+          status = "invalid";
+          break;
+        }
+
+        await dbQuery(
+          `INSERT INTO dynamic_techno (item_code, brand_name, product_description, size, uom, mrp, cut_price)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [itemCode, brandName, productDescription, size, uom, mrp, cutPrice]
+        );
+        break;
+      }
+
+      case "update-dynamic-techno": {
+        const id = toNumber(formData.get("id"));
+        const itemCode = toText(formData.get("item_code"));
+        const brandName = toText(formData.get("brand_name"));
+        const productDescription = toText(formData.get("product_description"));
+        const size = toText(formData.get("size"));
+        const uom = toText(formData.get("uom"));
+        const mrp = toNumber(formData.get("mrp"));
+        const cutPrice = toNumber(formData.get("cut_price"));
+
+        if (!id || !itemCode || !brandName || !productDescription || !size || !uom) {
+          status = "invalid";
+          break;
+        }
+
+        await dbQuery(
+          `UPDATE dynamic_techno
+           SET item_code = ?, brand_name = ?, product_description = ?, size = ?, uom = ?, mrp = ?, cut_price = ?
+           WHERE id = ?`,
+          [itemCode, brandName, productDescription, size, uom, mrp, cutPrice, id]
+        );
+        break;
+      }
+
+      case "delete-dynamic-techno": {
+        const id = toNumber(formData.get("id"));
+        if (!id) {
+          status = "invalid";
+          break;
+        }
+
+        await dbQuery("DELETE FROM dynamic_techno WHERE id = ?", [id]);
+        const dtDir = path.join(process.cwd(), "public", "uploads", "dynamic-techno", String(id));
+        await rm(dtDir, { recursive: true, force: true }).catch(() => {});
+        break;
+      }
+
+      case "delete-dynamic-techno-image": {
+        const imageId = toNumber(formData.get("image_id"));
+        const imagePath = toText(formData.get("image_path"));
+        if (!imageId || !imagePath) {
+          status = "invalid";
+          break;
+        }
+
+        await dbQuery("DELETE FROM dynamic_techno_product_images WHERE id = ?", [imageId]);
+        const dtDiskPath = path.join(process.cwd(), "public", imagePath.replace(/^\//, ""));
+        await unlink(dtDiskPath).catch(() => {});
+        break;
+      }
+
       default:
         action = "unknown";
         status = "invalid";
@@ -293,5 +370,6 @@ export async function POST(request: Request) {
 
   revalidatePath("/admin");
   revalidatePath("/shop");
+  revalidatePath("/");
   return redirectToAdmin(action, status);
 }
