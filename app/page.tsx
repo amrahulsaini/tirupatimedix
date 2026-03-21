@@ -15,7 +15,10 @@ export default async function Home() {
   const topMeril = merilProducts.slice(0, 6);
   const totalProducts = medicines.length + merilProducts.length;
   const firstMedicineImage = medicines.find((item) => item.images[0])?.images[0] ?? "/tirupati-medix-logo.webp";
-  const secondMedicineImage = medicines.find((item, index) => index > 0 && item.images[0])?.images[0] ?? firstMedicineImage;
+  const merilCategoryImage =
+    medicines.find(
+      (item) => item.images[0] && item.category.toLowerCase().includes("meril")
+    )?.images[0] ?? null;
 
   return (
     <div className="landing-page">
@@ -46,9 +49,11 @@ export default async function Home() {
             <Link href="/shop">Explore</Link>
           </article>
           <article className="category-card">
-            <div className="category-card__media">
-              <img src={secondMedicineImage} alt="Meril category preview" />
-            </div>
+            {merilCategoryImage ? (
+              <div className="category-card__media">
+                <img src={merilCategoryImage} alt="Meril category preview" />
+              </div>
+            ) : null}
             <h3>Meril Fully Automatic</h3>
             <p>{merilProducts.length} products currently available.</p>
             <Link href="/shop">Explore</Link>
