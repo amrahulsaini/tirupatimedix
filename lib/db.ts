@@ -85,4 +85,15 @@ export async function ensureDatabaseSchema() {
       FOREIGN KEY (meril_semi_product_id) REFERENCES meril_semi_automatic(id) ON DELETE CASCADE
     )`
   );
+
+  // One-time cleanup: remove duplicate rows in meril_semi_automatic
+  // caused by old INSERT IGNORE running without a unique key
+  await dbQuery(
+    `DELETE t1 FROM meril_semi_automatic t1
+     INNER JOIN meril_semi_automatic t2
+     WHERE t1.id > t2.id
+       AND t1.sr_no = t2.sr_no
+       AND t1.product_name = t2.product_name
+       AND t1.pack_size = t2.pack_size`
+  );
 }
