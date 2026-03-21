@@ -17,7 +17,11 @@ type Operation =
   | "create-meril"
   | "update-meril"
   | "delete-meril"
-  | "delete-meril-image";
+  | "delete-meril-image"
+  | "create-meril-semi"
+  | "update-meril-semi"
+  | "delete-meril-semi"
+  | "delete-meril-semi-image";
 
 function toNumber(value: FormDataEntryValue | null) {
   const num = Number(value);
@@ -201,6 +205,79 @@ export async function POST(request: Request) {
         await dbQuery("DELETE FROM meril_product_images WHERE id = ?", [imageId]);
         const diskPath = path.join(process.cwd(), "public", imagePath.replace(/^\//, ""));
         await unlink(diskPath).catch(() => {});
+        break;
+      }
+
+      case "create-meril-semi": {
+        const srNo = toNumber(formData.get("sr_no"));
+        const category = toText(formData.get("category"));
+        const productName = toText(formData.get("product_name"));
+        const packSize = toText(formData.get("pack_size"));
+        const mrpUnits = toNumber(formData.get("mrp_units"));
+        const cutPrice = toNumber(formData.get("cut_price"));
+        const gst = toText(formData.get("gst"));
+
+        if (!srNo || !category || !productName || !packSize || !gst) {
+          status = "invalid";
+          break;
+        }
+
+        await dbQuery(
+          `INSERT INTO meril_semi_automatic (sr_no, category, product_name, pack_size, mrp_units, cut_price, gst)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [srNo, category, productName, packSize, mrpUnits, cutPrice, gst]
+        );
+        break;
+      }
+
+      case "update-meril-semi": {
+        const id = toNumber(formData.get("id"));
+        const srNo = toNumber(formData.get("sr_no"));
+        const category = toText(formData.get("category"));
+        const productName = toText(formData.get("product_name"));
+        const packSize = toText(formData.get("pack_size"));
+        const mrpUnits = toNumber(formData.get("mrp_units"));
+        const cutPrice = toNumber(formData.get("cut_price"));
+        const gst = toText(formData.get("gst"));
+
+        if (!id || !srNo || !category || !productName || !packSize || !gst) {
+          status = "invalid";
+          break;
+        }
+
+        await dbQuery(
+          `UPDATE meril_semi_automatic
+           SET sr_no = ?, category = ?, product_name = ?, pack_size = ?, mrp_units = ?, cut_price = ?, gst = ?
+           WHERE id = ?`,
+          [srNo, category, productName, packSize, mrpUnits, cutPrice, gst, id]
+        );
+        break;
+      }
+
+      case "delete-meril-semi": {
+        const id = toNumber(formData.get("id"));
+        if (!id) {
+          status = "invalid";
+          break;
+        }
+
+        await dbQuery("DELETE FROM meril_semi_automatic WHERE id = ?", [id]);
+        const semiDir = path.join(process.cwd(), "public", "uploads", "meril-semi", String(id));
+        await rm(semiDir, { recursive: true, force: true }).catch(() => {});
+        break;
+      }
+
+      case "delete-meril-semi-image": {
+        const imageId = toNumber(formData.get("image_id"));
+        const imagePath = toText(formData.get("image_path"));
+        if (!imageId || !imagePath) {
+          status = "invalid";
+          break;
+        }
+
+        await dbQuery("DELETE FROM meril_semi_product_images WHERE id = ?", [imageId]);
+        const semiDiskPath = path.join(process.cwd(), "public", imagePath.replace(/^\//, ""));
+        await unlink(semiDiskPath).catch(() => {});
         break;
       }
 

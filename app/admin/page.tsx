@@ -4,6 +4,7 @@ import { Lock, LogOut, Plus, Save, Trash2, Upload } from "lucide-react";
 import { AdminQueryCleaner } from "@/app/admin/_components/admin-query-cleaner";
 import { AdminImageUploadForm } from "@/app/admin/_components/admin-image-upload-form";
 import { getAllMerilProducts } from "@/lib/meril";
+import { getAllMerilSemiProducts } from "@/lib/meril-semi";
 import { getAllMedicines } from "@/lib/medicines";
 
 export const dynamic = "force-dynamic";
@@ -31,6 +32,10 @@ function getAdminActionMessage(action?: string, status?: string) {
     "update-meril": "Meril product updated",
     "delete-meril": "Meril product deleted",
     "delete-meril-image": "Meril image removed",
+    "create-meril-semi": "Meril Semi-Auto product added",
+    "update-meril-semi": "Meril Semi-Auto product updated",
+    "delete-meril-semi": "Meril Semi-Auto product deleted",
+    "delete-meril-semi-image": "Meril Semi-Auto image removed",
   };
 
   const label = labels[action] ?? "Action";
@@ -91,17 +96,20 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
   let medicines = [] as Awaited<ReturnType<typeof getAllMedicines>>;
   let merilProducts = [] as Awaited<ReturnType<typeof getAllMerilProducts>>;
+  let merilSemiProducts = [] as Awaited<ReturnType<typeof getAllMerilSemiProducts>>;
   let dataLoadFailed = false;
 
   try {
-    const [medicinesResult, merilResult] = await Promise.allSettled([
+    const [medicinesResult, merilResult, merilSemiResult] = await Promise.allSettled([
       getAllMedicines(),
       getAllMerilProducts(),
+      getAllMerilSemiProducts(),
     ]);
 
     medicines = medicinesResult.status === "fulfilled" ? medicinesResult.value : [];
     merilProducts = merilResult.status === "fulfilled" ? merilResult.value : [];
-    dataLoadFailed = medicinesResult.status === "rejected" || merilResult.status === "rejected";
+    merilSemiProducts = merilSemiResult.status === "fulfilled" ? merilSemiResult.value : [];
+    dataLoadFailed = medicinesResult.status === "rejected" || merilResult.status === "rejected" || merilSemiResult.status === "rejected";
   } catch {
     dataLoadFailed = true;
   }
@@ -417,6 +425,132 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                       <img src={image.path} alt={`${item.productName} ${index + 1}`} />
                       <form action="/admin/mutate" method="post">
                         <input type="hidden" name="op" value="delete-meril-image" />
+                        <input type="hidden" name="image_id" value={image.id} />
+                        <input type="hidden" name="image_path" value={image.path} />
+                        <button type="submit" className="btn btn-secondary">
+                          Remove
+                        </button>
+                      </form>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section className="info-card admin-section-divider">
+        <h2>Add New Meril Semi-Automatic Product</h2>
+        <form action="/admin/mutate" method="post" className="admin-grid-form">
+          <input type="hidden" name="op" value="create-meril-semi" />
+          <label>
+            Sr. No
+            <input name="sr_no" type="number" min={1} step={1} required />
+          </label>
+          <label>
+            Category
+            <input name="category" defaultValue="meril semi automatic" required />
+          </label>
+          <label className="admin-span-2">
+            Product Name
+            <input name="product_name" required />
+          </label>
+          <label>
+            Pack Size
+            <input name="pack_size" required />
+          </label>
+          <label>
+            MRP Units
+            <input name="mrp_units" type="number" min={0} step="0.01" required />
+          </label>
+          <label>
+            Cut Price
+            <input name="cut_price" type="number" min={0} step="0.01" required />
+          </label>
+          <label>
+            GST
+            <input name="gst" defaultValue="5%" required />
+          </label>
+          <button type="submit" className="btn btn-primary admin-span-2">
+            <Plus size={16} /> Add Semi-Auto Product
+          </button>
+        </form>
+      </section>
+
+      <section className="admin-medicine-list">
+        {merilSemiProducts.map((item) => (
+          <article key={item.id} className="info-card admin-medicine-card">
+            <div className="admin-card-head">
+              <h3>
+                {item.productName} <span className="pill">SR: {item.srNo}</span>
+                <span className="pill pill--semi">Semi-Auto</span>
+              </h3>
+              <form action="/admin/mutate" method="post">
+                <input type="hidden" name="op" value="delete-meril-semi" />
+                <input type="hidden" name="id" value={item.id} />
+                <button type="submit" className="btn btn-secondary">
+                  <Trash2 size={16} /> Delete
+                </button>
+              </form>
+            </div>
+
+            <form action="/admin/mutate" method="post" className="admin-grid-form">
+              <input type="hidden" name="op" value="update-meril-semi" />
+              <input type="hidden" name="id" value={item.id} />
+              <label>
+                Sr. No
+                <input name="sr_no" type="number" min={1} step={1} defaultValue={item.srNo} required />
+              </label>
+              <label>
+                Category
+                <input name="category" defaultValue={item.category} required />
+              </label>
+              <label className="admin-span-2">
+                Product Name
+                <input name="product_name" defaultValue={item.productName} required />
+              </label>
+              <label>
+                Pack Size
+                <input name="pack_size" defaultValue={item.packSize} required />
+              </label>
+              <label>
+                MRP Units
+                <input name="mrp_units" type="number" min={0} step="0.01" defaultValue={item.mrpUnits} required />
+              </label>
+              <label>
+                Cut Price
+                <input
+                  name="cut_price"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  defaultValue={item.cutPrice}
+                  required
+                />
+              </label>
+              <label>
+                GST
+                <input name="gst" defaultValue={item.gst} required />
+              </label>
+              <button type="submit" className="btn btn-primary admin-span-2">
+                <Save size={16} /> Save Semi-Auto Product
+              </button>
+            </form>
+
+            <div className="admin-images-block">
+              <h4>Semi-Auto Images</h4>
+              <AdminImageUploadForm entityId={item.id} target="meril-semi" />
+
+              <div className="admin-image-grid">
+                {item.imageItems.length === 0 ? (
+                  <p className="muted">No images uploaded yet.</p>
+                ) : (
+                  item.imageItems.map((image, index) => (
+                    <div key={image.id} className="admin-image-item">
+                      <img src={image.path} alt={`${item.productName} ${index + 1}`} />
+                      <form action="/admin/mutate" method="post">
+                        <input type="hidden" name="op" value="delete-meril-semi-image" />
                         <input type="hidden" name="image_id" value={image.id} />
                         <input type="hidden" name="image_path" value={image.path} />
                         <button type="submit" className="btn btn-secondary">
