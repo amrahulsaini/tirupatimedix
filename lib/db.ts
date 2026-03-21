@@ -39,13 +39,7 @@ export async function dbQuery<T extends unknown[]>(sql: string, params: unknown[
   return [rows as T, fields] as const;
 }
 
-let schemaReady = false;
-
 export async function ensureDatabaseSchema() {
-  if (schemaReady) {
-    return;
-  }
-
   await dbQuery(
     `CREATE TABLE IF NOT EXISTS medicine_images (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -127,6 +121,4 @@ export async function ensureDatabaseSchema() {
       FOREIGN KEY (meril_product_id) REFERENCES meril_fully_automatic(id) ON DELETE CASCADE
     )`
   );
-
-  schemaReady = true;
 }
