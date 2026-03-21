@@ -132,8 +132,8 @@ a {
 }
 
 .brand-mark {
-  width: clamp(88px, 7.4vw, 102px);
-  height: clamp(52px, 4.8vw, 64px);
+  width: clamp(90px, 7.6vw, 108px);
+  height: clamp(58px, 5.4vw, 72px);
   border-radius: 999px;
   border: 2px solid rgba(22, 98, 73, 0.2);
   background: linear-gradient(150deg, #e7f3ec, #f7fbf9);
@@ -1185,8 +1185,8 @@ textarea:focus {
   }
 
   .brand-mark {
-    width: 84px;
-    height: 50px;
+    width: 86px;
+    height: 56px;
     padding: 0;
   }
 

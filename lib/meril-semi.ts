@@ -42,11 +42,17 @@ export async function getAllMerilSemiProducts(): Promise<MerilSemiProduct[]> {
      ORDER BY sr_no ASC, product_name ASC`
   );
 
-  const [imageRows] = await dbQuery<MerilSemiImageRow[]>(
-    `SELECT id, meril_semi_product_id, image_path, sort_order
-     FROM meril_semi_product_images
-     ORDER BY meril_semi_product_id ASC, sort_order ASC, id ASC`
-  );
+  let imageRows: MerilSemiImageRow[] = [];
+  try {
+    const [imgs] = await dbQuery<MerilSemiImageRow[]>(
+      `SELECT id, meril_semi_product_id, image_path, sort_order
+       FROM meril_semi_product_images
+       ORDER BY meril_semi_product_id ASC, sort_order ASC, id ASC`
+    );
+    imageRows = imgs;
+  } catch {
+    // table may not exist yet
+  }
 
   const imageMap = new Map<number, { id: number; path: string }[]>();
   for (const image of imageRows) {
