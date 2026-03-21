@@ -132,12 +132,12 @@ a {
 }
 
 .brand-mark {
-  width: clamp(98px, 8.6vw, 116px);
+  width: clamp(88px, 7.4vw, 102px);
   height: clamp(52px, 4.8vw, 64px);
   border-radius: 999px;
   border: 2px solid rgba(22, 98, 73, 0.2);
   background: linear-gradient(150deg, #e7f3ec, #f7fbf9);
-  padding: 0;
+  padding: 2px 4px;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
@@ -154,7 +154,7 @@ a {
 .brand-mark img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   border-radius: 999px;
 }
@@ -1074,9 +1074,9 @@ textarea:focus {
   }
 
   .brand-mark {
-    width: 92px;
+    width: 84px;
     height: 50px;
-    padding: 0;
+    padding: 2px 4px;
   }
 
   .hero,
