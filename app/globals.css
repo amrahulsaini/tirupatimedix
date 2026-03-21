@@ -1032,9 +1032,11 @@ textarea:focus {
   }
 
   .home-banner__image {
-    aspect-ratio: auto;
-    height: auto;
+    aspect-ratio: 587 / 1211;
+    height: min(72vh, 740px);
     object-fit: contain;
+    object-position: top center;
+    background: #f4f8f5;
   }
 
   .top-strip {
