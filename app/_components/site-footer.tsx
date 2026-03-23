@@ -46,7 +46,7 @@ export function SiteFooter() {
             <Mail size={16} /> care@tirupatimedix.com
           </p>
           <p>
-            <Clock3 size={16} /> Mon - Sat: 9:00 AM to 9:30 PM
+            <Clock3 size={16} /> Mon - Sat: 9:00 AM to 7:30 PM
           </p>
         </div>
       </div>
