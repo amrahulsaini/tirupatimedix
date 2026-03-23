@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     siteName: "Tirupati Medix",
     images: [
       {
-        url: "/tirupati-medix-logo.webp",
+        url: "/main-logo.webp",
         width: 1200,
         height: 630,
         alt: "Tirupati Medix",

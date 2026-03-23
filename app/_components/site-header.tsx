@@ -47,7 +47,7 @@ export function SiteHeader() {
         <Link href="/" className="brand" onClick={() => setIsOpen(false)}>
           <span className="brand-mark">
             <Image
-              src="/tirupati-medix-logo.webp"
+              src="/main-logo.webp"
               alt="Tirupati Medix"
               width={74}
               height={74}
