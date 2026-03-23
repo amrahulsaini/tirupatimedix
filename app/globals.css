@@ -546,14 +546,9 @@ a {
   box-shadow: var(--shadow-card);
   animation: rise 0.5s ease both;
   transition: transform var(--transition-bounce), box-shadow var(--transition-bounce), border-color var(--transition-base);
-  min-height: 430px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-}
-
-.product-card h3 {
-  flex: 1;
 }
 
 .product-card > *:not(.db-medicine-image):not(.product-card__badge-row) {
@@ -579,7 +574,9 @@ a {
 }
 
 .product-card h3 {
-  margin: 0 0 0.4rem;
+  margin: 0.4rem 0;
+  font-size: 0.95rem;
+  line-height: 1.35;
 }
 
 .product-card .description,
@@ -1224,8 +1221,7 @@ textarea:focus {
 }
 
 .product-card .price-row {
-  margin-top: auto;
-  padding-top: 0.5rem;
+  margin-top: 0.35rem;
   padding-bottom: 1rem;
 }
 
