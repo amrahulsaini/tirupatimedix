@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Clock3, Mail, MapPin, Phone } from "lucide-react";
 
 import { storeAddress } from "@/app/_data/products";
+import { ContactForm } from "@/app/_components/contact-form";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -16,23 +17,7 @@ export default function ContactPage() {
         <p className="muted">
           Reach out for order support, prescription queries, or bulk medicine requirements.
         </p>
-        <form className="list-reset" action="#">
-          <label>
-            Name
-            <input type="text" placeholder="Your name" />
-          </label>
-          <label>
-            Mobile Number
-            <input type="tel" placeholder="+91" />
-          </label>
-          <label>
-            Message
-            <textarea rows={4} placeholder="Write your query" />
-          </label>
-          <button type="submit" className="btn btn-primary">
-            Send Message
-          </button>
-        </form>
+        <ContactForm />
       </section>
 
       <aside className="info-card">
@@ -42,7 +27,7 @@ export default function ContactPage() {
             <MapPin size={16} /> {storeAddress}
           </li>
           <li>
-            <Phone size={16} /> +91 98290 00001
+            <Phone size={16} /> +91 6367137808
           </li>
           <li>
             <Mail size={16} /> care@tirupatimedix.com
