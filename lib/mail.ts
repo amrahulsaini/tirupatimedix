@@ -24,7 +24,10 @@ function getTransporter() {
     port,
     secure: port === 465,
     auth: { user, pass },
-    requireTLS: true,
+    requireTLS: port !== 25,
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 20000,
     tls: {
       rejectUnauthorized: false,
     },

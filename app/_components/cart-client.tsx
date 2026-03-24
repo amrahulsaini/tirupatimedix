@@ -153,9 +153,9 @@ export function CartClient() {
         </div>
       </section>
 
-      <aside className="info-card">
+      <aside className="info-card order-summary-card">
         <h3>Order Summary</h3>
-        <ul className="list-reset">
+        <ul className="list-reset order-summary-list">
           <li>
             <span>Subtotal</span>
             <strong>Rs. {data?.cart.subtotal.toFixed(2) ?? "0.00"}</strong>
@@ -168,15 +168,18 @@ export function CartClient() {
             <span>Shipping</span>
             <strong>{summary?.shippingAmount ? `Rs. ${summary.shippingAmount.toFixed(2)}` : "Free"}</strong>
           </li>
-          <li>
+          <li className="order-summary-list__total">
             <span>Total Payable</span>
             <strong>Rs. {summary?.total.toFixed(2) ?? "0.00"}</strong>
           </li>
         </ul>
-        <p className="muted">
+        <p className="order-summary-note">
+          GST is mandatory on all products.
+        </p>
+        <p className="muted order-summary-note">
           Free shipping above Rs. 2000, or above Rs. 1000 for Udaipur pincodes 313001-313005.
         </p>
-        <div className="hero__cta">
+        <div className="hero__cta order-summary-actions">
           <Link href="/checkout" className="btn btn-primary">
             Proceed to Checkout
           </Link>

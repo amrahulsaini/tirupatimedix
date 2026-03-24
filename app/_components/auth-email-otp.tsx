@@ -14,11 +14,25 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
 
+  async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 25000) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      return await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
   async function requestOtp() {
     try {
       setLoading(true);
       setMessage("");
-      const response = await fetch("/api/auth/request-otp", {
+      const response = await fetchWithTimeout("/api/auth/request-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -30,7 +44,11 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
       setStep("otp");
       setMessage("OTP sent to your email.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to send OTP.");
+      if (error instanceof DOMException && error.name === "AbortError") {
+        setMessage("OTP request timed out. Please check SMTP settings and try again.");
+      } else {
+        setMessage(error instanceof Error ? error.message : "Unable to send OTP.");
+      }
     } finally {
       setLoading(false);
     }
@@ -40,7 +58,7 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
     try {
       setLoading(true);
       setMessage("");
-      const response = await fetch("/api/auth/verify-otp", {
+      const response = await fetchWithTimeout("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
@@ -52,7 +70,11 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
       setMessage("Email verified successfully.");
       onVerified?.(result.user?.email ?? email);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to verify OTP.");
+      if (error instanceof DOMException && error.name === "AbortError") {
+        setMessage("OTP verification timed out. Please try again.");
+      } else {
+        setMessage(error instanceof Error ? error.message : "Unable to verify OTP.");
+      }
     } finally {
       setLoading(false);
     }

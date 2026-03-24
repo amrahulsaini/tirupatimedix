@@ -115,6 +115,7 @@ async function OstomyCareSection() {
                     <span>₹{item.mrpUnits.toFixed(2)}</span>
                     <em>Best Price</em>
                   </div>
+                  <p className="gst-note">+ 5% GST mandatory</p>
                   <ShopProductActions productType="hollister" productId={item.id} />
                 </article>
               ))}
@@ -163,6 +164,7 @@ async function PathologySection() {
                   <span>₹{item.mrpUnits.toFixed(2)}</span>
                   <em>Best Price</em>
                 </div>
+                <p className="gst-note">+ 5% GST mandatory</p>
                 <ShopProductActions productType="meril_fa" productId={item.id} />
               </article>
             ))}
@@ -190,6 +192,7 @@ async function PathologySection() {
                   <span>₹{item.mrpUnits.toFixed(2)}</span>
                   <em>Best Price</em>
                 </div>
+                <p className="gst-note">+ 5% GST mandatory</p>
                 <ShopProductActions productType="meril_sa" productId={item.id} />
               </article>
             ))}
@@ -231,6 +234,7 @@ async function WoundDressingSection() {
               <span>₹{item.mrp.toFixed(2)}</span>
               <em>Best Price</em>
             </div>
+            <p className="gst-note">+ 5% GST mandatory</p>
             <ShopProductActions productType="dynamic" productId={item.id} />
           </article>
         ))}

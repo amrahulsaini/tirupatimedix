@@ -669,6 +669,13 @@ a {
   width: 100%;
 }
 
+.gst-note {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 0.8rem;
+  color: #a65400;
+  font-weight: 700;
+}
+
 .auth-card {
   border: 1px solid var(--stroke);
   border-radius: 14px;
@@ -884,6 +891,48 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.order-summary-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbf9 100%);
+  border: 1px solid rgba(22, 98, 73, 0.15);
+}
+
+.order-summary-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.order-summary-list li {
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(22, 98, 73, 0.09);
+  background: #fff;
+}
+
+.order-summary-list__total {
+  background: linear-gradient(135deg, rgba(22, 98, 73, 0.12), rgba(22, 98, 73, 0.06));
+  border-color: rgba(22, 98, 73, 0.25);
+}
+
+.order-summary-list__total strong {
+  color: var(--brand-strong);
+  font-size: 1.05rem;
+}
+
+.order-summary-note {
+  margin: 0.7rem 0 0;
+}
+
+.order-summary-actions {
+  margin-top: 0.9rem;
+  grid-template-columns: 1fr;
+}
+
+.order-summary-actions .btn {
+  width: 100%;
 }
 
 .site-footer {
@@ -1340,6 +1389,11 @@ textarea:focus {
   .category-showcase {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .order-summary-card {
+    position: sticky;
+    top: 110px;
+  }
 }
 
 @media (max-width: 720px) {
@@ -1403,6 +1457,11 @@ textarea:focus {
   .category-showcase {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
+  }
+
+  .order-summary-card {
+    position: static;
+    top: auto;
   }
 
   .showcase-card__label {
