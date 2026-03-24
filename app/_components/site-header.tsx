@@ -40,7 +40,7 @@ export function SiteHeader() {
   }, []);
 
   useEffect(() => {
-    if (pathname === "/search") {
+    if (pathname === "/") {
       const params = new URLSearchParams(window.location.search);
       setSearchQuery(params.get("q") ?? "");
     }
@@ -57,11 +57,11 @@ export function SiteHeader() {
     event.preventDefault();
     const query = searchQuery.trim();
     if (!query) {
-      router.push("/shop");
+      router.push("/");
       return;
     }
 
-    router.push(`/search?q=${encodeURIComponent(query)}`);
+    router.push(`/?q=${encodeURIComponent(query)}#search-results`);
     setIsOpen(false);
   }
 
@@ -128,7 +128,11 @@ export function SiteHeader() {
             type="button"
             className="header-search-mobile"
             aria-label="Open product search"
-            onClick={() => router.push(searchQuery.trim() ? `/search?q=${encodeURIComponent(searchQuery.trim())}` : "/search")}
+            onClick={() =>
+              router.push(
+                searchQuery.trim() ? `/?q=${encodeURIComponent(searchQuery.trim())}#search-results` : "/"
+              )
+            }
           >
             <Search size={18} />
           </button>

@@ -6,14 +6,22 @@ import { getAllMerilProducts } from "@/lib/meril";
 import { getAllMerilSemiProducts } from "@/lib/meril-semi";
 import { getAllMedicines } from "@/lib/medicines";
 import { getAllDynamicTechnoProducts } from "@/lib/dynamic-techno";
+import { searchCatalogProducts } from "@/lib/product-search";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+type HomePageProps = {
+  searchParams: Promise<{ q?: string }>;
+};
+
+export default async function Home({ searchParams }: HomePageProps) {
+  const params = await searchParams;
+  const searchQuery = (params.q ?? "").trim();
   const medicines = await getAllMedicines().catch(() => []);
   const merilProducts = await getAllMerilProducts().catch(() => []);
   const merilSemiProducts = await getAllMerilSemiProducts().catch(() => []);
   const dynamicTechnoProducts = await getAllDynamicTechnoProducts().catch(() => []);
+  const searchResults = searchQuery ? await searchCatalogProducts(searchQuery, 24) : [];
 
   const topHollister = medicines.slice(0, 6);
   const topMeril = merilProducts.slice(0, 6);
@@ -65,6 +73,49 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {searchQuery ? (
+        <section className="container section" id="search-results">
+          <SectionTitle
+            eyebrow="Search Results"
+            title={`Results for \"${searchQuery}\"`}
+            subtitle={`${searchResults.length} products matched your query`}
+          />
+          {searchResults.length === 0 ? (
+            <div className="info-card">
+              <h3>No matching products found</h3>
+              <p className="muted">Try product code, name, or brand keyword.</p>
+            </div>
+          ) : (
+            <div className="product-grid search-results-grid">
+              {searchResults.map((item) => {
+                const discountPercent = Math.max(
+                  0,
+                  Math.round(((item.mrpPrice - item.cutPrice) / item.mrpPrice) * 100)
+                );
+                return (
+                  <article key={item.id} className="product-card">
+                    {item.image ? <img src={item.image} alt={item.name} className="db-medicine-image" /> : null}
+                    <h3>{item.name} - {item.code}</h3>
+                    <p className="muted">{item.subtitle}</p>
+                    <p className="search-result-meta">Category: {item.category}</p>
+                    <p className="discount-note">Save {discountPercent}% on MRP</p>
+                    <div className="price-row">
+                      <strong>Rs. {item.cutPrice.toFixed(2)}</strong>
+                      <span>Rs. {item.mrpPrice.toFixed(2)}</span>
+                      <em>Best Price</em>
+                    </div>
+                    <div className="search-result-actions">
+                      <Link href={item.shopPath} className="btn btn-secondary">Open Category</Link>
+                    </div>
+                    <ShopProductActions productType={item.productType} productId={item.productId} />
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      ) : null}
 
       <section className="container section">
         <SectionTitle

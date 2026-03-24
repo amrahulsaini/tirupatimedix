@@ -232,7 +232,7 @@ a {
   background: #fff;
   border-radius: 999px;
   overflow: hidden;
-  min-width: min(320px, 38vw);
+  width: min(260px, 26vw);
   box-shadow: 0 3px 10px rgba(16, 55, 41, 0.08);
 }
 
@@ -1844,6 +1844,12 @@ textarea:focus {
     grid-column: 1 / -1;
     justify-content: start;
     margin-top: 0.2rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .header-search {
+    width: min(220px, 24vw);
   }
 }
 
