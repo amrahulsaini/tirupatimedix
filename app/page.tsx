@@ -21,7 +21,7 @@ export default async function Home() {
   const topDynamicTechno = dynamicTechnoProducts.slice(0, 6);
   const totalProducts = medicines.length + merilProducts.length + merilSemiProducts.length + dynamicTechnoProducts.length;
   const recognizedBrands = [
-    { src: "/carasol/coloplast.webp", name: "Coloplast" },
+    { src: "/carasol/coloplast-updated.webp", name: "Coloplast" },
     { src: "/carasol/dynamic.webp", name: "Dynamic" },
     { src: "/carasol/hollsiter.webp", name: "Hollister" },
     { src: "/carasol/jmitra.webp", name: "J Mitra" },
@@ -42,6 +42,28 @@ export default async function Home() {
             className="home-banner__image"
           />
         </picture>
+      </section>
+
+      <section className="section brand-marquee-section" aria-label="Recognised medical brands">
+        <div className="brand-marquee-section__header">
+          <p>Trusted Partners</p>
+          <h2>Shop By Recognised Brands</h2>
+        </div>
+        <div className="brand-carousel">
+          <div className="brand-carousel__track">
+            {marqueeBrands.map((brand, index) => (
+              <div
+                key={`${brand.name}-${index}`}
+                className="brand-carousel__item"
+                aria-hidden={index >= recognizedBrands.length}
+              >
+                <div className="brand-carousel__oval">
+                  <img src={brand.src} alt={`${brand.name} logo`} loading="lazy" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="container section">
@@ -78,29 +100,6 @@ export default async function Home() {
               <span className="showcase-card__arrow">&rarr;</span>
             </div>
           </Link>
-        </div>
-      </section>
-
-      <section className="container section">
-        <SectionTitle
-          eyebrow="Trusted Partners"
-          title="Shop By Recognised Brands"
-          subtitle="Leading medical brands we supply across India."
-        />
-        <div className="brand-carousel" aria-label="Recognised medical brands">
-          <div className="brand-carousel__track">
-            {marqueeBrands.map((brand, index) => (
-              <div
-                key={`${brand.name}-${index}`}
-                className="brand-carousel__item"
-                aria-hidden={index >= recognizedBrands.length}
-              >
-                <div className="brand-carousel__oval">
-                  <img src={brand.src} alt={`${brand.name} logo`} loading="lazy" />
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 

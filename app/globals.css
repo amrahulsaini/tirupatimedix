@@ -439,16 +439,45 @@ a {
   gap: 1.25rem;
 }
 
-.brand-carousel {
-  position: relative;
-  overflow: hidden;
-  border-radius: 18px;
-  border: 1px solid rgba(19, 32, 27, 0.08);
+.brand-marquee-section {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 1.2rem 0 0;
   background:
     radial-gradient(circle at 15% 20%, rgba(22, 98, 73, 0.1), transparent 52%),
     radial-gradient(circle at 80% 15%, rgba(246, 164, 61, 0.14), transparent 42%),
-    linear-gradient(180deg, #ffffff, #f4f9f5);
-  padding: 1.2rem 0;
+    linear-gradient(180deg, #f9fcfa, #eff7f1);
+}
+
+.brand-marquee-section__header {
+  text-align: center;
+  margin: 0 auto 0.9rem;
+  padding: 0 0.9rem;
+}
+
+.brand-marquee-section__header p {
+  margin: 0;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--brand-strong);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.brand-marquee-section__header h2 {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-dm-serif), serif;
+  font-size: clamp(1.45rem, 2.9vw, 2.2rem);
+  line-height: 1.1;
+}
+
+.brand-carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  border: none;
+  padding: 0.85rem 0 1.2rem;
 }
 
 .brand-carousel::before,
@@ -464,12 +493,12 @@ a {
 
 .brand-carousel::before {
   left: 0;
-  background: linear-gradient(90deg, #f7fbf8 10%, rgba(247, 251, 248, 0));
+  background: linear-gradient(90deg, #f2f8f3 12%, rgba(242, 248, 243, 0));
 }
 
 .brand-carousel::after {
   right: 0;
-  background: linear-gradient(270deg, #f7fbf8 10%, rgba(247, 251, 248, 0));
+  background: linear-gradient(270deg, #f2f8f3 12%, rgba(242, 248, 243, 0));
 }
 
 .brand-carousel__track {
@@ -482,7 +511,7 @@ a {
 
 .brand-carousel__item {
   flex: 0 0 auto;
-  padding: 0 0.45rem;
+  padding: 0 0.38rem;
 }
 
 .brand-carousel__oval {
@@ -1793,9 +1822,20 @@ textarea:focus {
     gap: 0.75rem;
   }
 
+  .brand-marquee-section {
+    padding-top: 0.9rem;
+  }
+
+  .brand-marquee-section__header {
+    margin-bottom: 0.6rem;
+  }
+
+  .brand-marquee-section__header h2 {
+    font-size: clamp(1.2rem, 5.3vw, 1.6rem);
+  }
+
   .brand-carousel {
-    border-radius: 14px;
-    padding: 0.95rem 0;
+    padding: 0.65rem 0 0.85rem;
   }
 
   .brand-carousel::before,
