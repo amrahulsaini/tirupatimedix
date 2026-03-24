@@ -225,6 +225,50 @@ a {
   justify-self: end;
 }
 
+.header-search {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--stroke);
+  background: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+  min-width: min(320px, 38vw);
+  box-shadow: 0 3px 10px rgba(16, 55, 41, 0.08);
+}
+
+.header-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0.52rem 0.75rem;
+  min-width: 0;
+  width: 100%;
+  font-size: 0.85rem;
+  box-shadow: none;
+}
+
+.header-search input:focus {
+  border: none;
+  box-shadow: none;
+}
+
+.header-search button {
+  border: none;
+  border-left: 1px solid rgba(19, 32, 27, 0.08);
+  background: rgba(22, 98, 73, 0.08);
+  color: var(--brand-strong);
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.header-search-mobile {
+  display: none;
+}
+
 .nav-actions a,
 .nav-actions button {
   border: 1px solid var(--stroke);
@@ -922,6 +966,42 @@ a {
 .content-hero p {
   color: var(--ink-soft);
   line-height: 1.6;
+}
+
+.search-hero {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.search-page-form {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-page-form input {
+  flex: 1 1 320px;
+  min-height: 42px;
+}
+
+.search-results-grid {
+  gap: 1.1rem;
+}
+
+.search-result-meta {
+  margin: 0.3rem 0 0;
+  font-size: 0.82rem;
+  color: var(--brand-strong);
+  font-weight: 700;
+}
+
+.search-result-actions {
+  margin-top: 0.75rem;
+}
+
+.search-empty-actions {
+  margin-top: 0.8rem;
 }
 
 .split-grid {
@@ -1685,6 +1765,14 @@ textarea:focus {
     display: inline-flex;
   }
 
+  .header-search {
+    display: none;
+  }
+
+  .header-search-mobile {
+    display: inline-flex;
+  }
+
   .mobile-nav {
     display: block;
     max-height: 0;
@@ -1794,6 +1882,15 @@ textarea:focus {
 
   .brand {
     gap: 0.45rem;
+  }
+
+  .search-page-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-page-form .btn {
+    width: 100%;
   }
 
   .brand strong {

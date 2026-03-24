@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { LogOut, Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -22,8 +23,11 @@ const announcements = [
 ];
 
 export function SiteHeader() {
+  const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     async function fetchMe() {
@@ -35,11 +39,30 @@ export function SiteHeader() {
     void fetchMe();
   }, []);
 
+  useEffect(() => {
+    if (pathname === "/search") {
+      const params = new URLSearchParams(window.location.search);
+      setSearchQuery(params.get("q") ?? "");
+    }
+  }, [pathname]);
+
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
     setIsAuthenticated(false);
     setIsOpen(false);
     window.location.href = "/";
+  }
+
+  function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) {
+      router.push("/shop");
+      return;
+    }
+
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+    setIsOpen(false);
   }
 
   return (
@@ -89,7 +112,24 @@ export function SiteHeader() {
         </nav>
 
         <div className="nav-actions">
-          <button type="button" aria-label="Search medicines">
+          <form className="header-search" role="search" onSubmit={handleSearchSubmit}>
+            <input
+              type="search"
+              placeholder="Search by code or name"
+              aria-label="Search products"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+            />
+            <button type="submit" aria-label="Search medicines">
+              <Search size={16} />
+            </button>
+          </form>
+          <button
+            type="button"
+            className="header-search-mobile"
+            aria-label="Open product search"
+            onClick={() => router.push(searchQuery.trim() ? `/search?q=${encodeURIComponent(searchQuery.trim())}` : "/search")}
+          >
             <Search size={18} />
           </button>
           <Link href="/account" aria-label="Profile login">
