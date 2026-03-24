@@ -36,8 +36,13 @@ export async function GET(
         "Cache-Control": "public, max-age=86400",
       },
     });
-  } catch (error: any) {
-    if (error.code === 'ENOENT') {
+  } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "ENOENT"
+    ) {
       return new NextResponse("File not found", { status: 404 });
     }
     console.error("Error serving uploaded file:", error);

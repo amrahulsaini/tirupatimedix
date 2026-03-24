@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, Search, ShoppingCart, X } from "lucide-react";
-import { useState } from "react";
+import { LogOut, Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -15,6 +15,7 @@ const navLinks = [
 
 const announcements = [
   "Free Shipping above ₹2000",
+  "Udaipur (313001-313005): Free Shipping above ₹1000",
   "Delivery in 4 to 5 days",
   "100% genuine medical products",
   "Need help? Talk to a pharmacist at Contact",
@@ -22,6 +23,24 @@ const announcements = [
 
 export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    async function fetchMe() {
+      const response = await fetch("/api/auth/me");
+      const result = await response.json();
+      setIsAuthenticated(Boolean(result.authenticated));
+    }
+
+    void fetchMe();
+  }, []);
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setIsAuthenticated(false);
+    setIsOpen(false);
+    window.location.href = "/";
+  }
 
   return (
     <header className="site-header">
@@ -73,9 +92,17 @@ export function SiteHeader() {
           <button type="button" aria-label="Search medicines">
             <Search size={18} />
           </button>
+          <Link href="/account" aria-label="Profile login">
+            <UserRound size={18} />
+          </Link>
           <Link href="/cart" aria-label="View cart">
             <ShoppingCart size={18} />
           </Link>
+          {isAuthenticated ? (
+            <button type="button" aria-label="Logout" onClick={handleLogout}>
+              <LogOut size={18} />
+            </button>
+          ) : null}
           <button
             type="button"
             className="mobile-toggle"
@@ -98,6 +125,14 @@ export function SiteHeader() {
           <Link href="/checkout" onClick={() => setIsOpen(false)}>
             Checkout
           </Link>
+          <Link href="/account" onClick={() => setIsOpen(false)}>
+            Profile Login
+          </Link>
+          {isAuthenticated ? (
+            <button type="button" className="btn btn-secondary" onClick={handleLogout}>
+              Logout
+            </button>
+          ) : null}
         </div>
       </div>
     </header>

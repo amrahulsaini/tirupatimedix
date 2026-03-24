@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { SectionTitle } from "@/app/_components/section-title";
+import { ShopProductActions } from "@/app/_components/shop-product-actions";
 import { getAllMerilProducts } from "@/lib/meril";
 import { getAllMerilSemiProducts } from "@/lib/meril-semi";
 import { getAllMedicines } from "@/lib/medicines";
@@ -114,6 +115,7 @@ async function OstomyCareSection() {
                     <span>₹{item.mrpUnits.toFixed(2)}</span>
                     <em>Best Price</em>
                   </div>
+                  <ShopProductActions productType="hollister" productId={item.id} />
                 </article>
               ))}
             </div>
@@ -161,6 +163,7 @@ async function PathologySection() {
                   <span>₹{item.mrpUnits.toFixed(2)}</span>
                   <em>Best Price</em>
                 </div>
+                <ShopProductActions productType="meril_fa" productId={item.id} />
               </article>
             ))}
           </div>
@@ -187,6 +190,7 @@ async function PathologySection() {
                   <span>₹{item.mrpUnits.toFixed(2)}</span>
                   <em>Best Price</em>
                 </div>
+                <ShopProductActions productType="meril_sa" productId={item.id} />
               </article>
             ))}
           </div>
@@ -227,6 +231,7 @@ async function WoundDressingSection() {
               <span>₹{item.mrp.toFixed(2)}</span>
               <em>Best Price</em>
             </div>
+            <ShopProductActions productType="dynamic" productId={item.id} />
           </article>
         ))}
       </div>
