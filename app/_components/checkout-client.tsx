@@ -35,6 +35,7 @@ export function CheckoutClient() {
   const [loadingMe, setLoadingMe] = useState(true);
   const [loadingOrder, setLoadingOrder] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
+  const [statusType, setStatusType] = useState<"info" | "success" | "error">("info");
   const [pincode, setPincode] = useState("");
   const [cartSummary, setCartSummary] = useState<CartSummary | null>(null);
   const [form, setForm] = useState({
@@ -71,38 +72,38 @@ export function CheckoutClient() {
     }
   }
 
-  async function verifyShipping(nextPincode: string) {
-    if (nextPincode.length < 6) {
-      return;
-    }
-
-    const response = await fetch("/api/checkout/shipping", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pincode: nextPincode }),
-    });
+  async function loadCartSummary(nextPincode: string) {
+    const query = nextPincode ? `?pincode=${encodeURIComponent(nextPincode)}` : "";
+    const response = await fetch(`/api/cart${query}`);
 
     const result = await response.json();
     if (!response.ok || !result.ok) {
-      setStatusMessage(result.message ?? "Unable to verify shipping.");
+      setStatusType("error");
+      setStatusMessage(result.message ?? "Unable to load order summary.");
       return;
     }
 
     setCartSummary({
-      subtotal: Number(result.subtotal),
+      subtotal: Number(result.cart?.subtotal ?? 0),
       pricing: result.pricing,
-      shippingMessage: result.shippingMessage,
+      shippingMessage: result.shippingNote,
     });
-    setStatusMessage(result.shippingMessage);
+
+    if (nextPincode.length === 6) {
+      setStatusType("info");
+      setStatusMessage(result.shippingNote);
+    }
   }
 
   async function handlePayNow() {
     if (!canPay) {
+      setStatusType("error");
       setStatusMessage("Please complete email verification and all checkout details.");
       return;
     }
 
     if (!window.Razorpay) {
+      setStatusType("error");
       setStatusMessage("Razorpay script did not load. Please refresh the page.");
       return;
     }
@@ -110,6 +111,7 @@ export function CheckoutClient() {
     try {
       setLoadingOrder(true);
       setStatusMessage("");
+      setStatusType("info");
 
       const response = await fetch("/api/checkout/create-order", {
         method: "POST",
@@ -153,17 +155,35 @@ export function CheckoutClient() {
 
           const verifyResult = await verifyResponse.json();
           if (!verifyResponse.ok || !verifyResult.ok) {
+            setStatusType("error");
             setStatusMessage(verifyResult.message ?? "Payment verification failed.");
             return;
           }
 
+          setStatusType("success");
           setStatusMessage(`Payment successful. Order confirmed with Bill No: ${verifyResult.billNo}`);
-          window.location.href = "/cart";
+          window.location.href = `/checkout?status=success&billNo=${encodeURIComponent(verifyResult.billNo)}`;
+        },
+        modal: {
+          ondismiss: function () {
+            setStatusType("error");
+            setStatusMessage("Payment was cancelled. You can retry anytime.");
+          },
         },
       });
 
+      // Razorpay exposes failed attempts via this event in browser runtime.
+      (razorpay as { on?: (event: string, cb: (resp: { error?: { description?: string } }) => void) => void }).on?.(
+        "payment.failed",
+        (resp) => {
+          setStatusType("error");
+          setStatusMessage(resp?.error?.description ?? "Payment failed. Please try again.");
+        }
+      );
+
       razorpay.open();
     } catch (error) {
+      setStatusType("error");
       setStatusMessage(error instanceof Error ? error.message : "Unable to place order.");
     } finally {
       setLoadingOrder(false);
@@ -175,7 +195,7 @@ export function CheckoutClient() {
   }, []);
 
   useEffect(() => {
-    void verifyShipping(pincode);
+    void loadCartSummary(pincode);
   }, [pincode]);
 
   return (
@@ -184,9 +204,7 @@ export function CheckoutClient() {
       <div className="content-page container split-grid">
         <section className="info-card">
           <h1>Checkout</h1>
-          <p className="muted">
-            Secure payment with Razorpay. GST (5%) and shipping are calculated instantly by pincode.
-          </p>
+          <p className="muted">Complete your address and proceed to secure payment.</p>
 
           {loadingMe ? <p className="muted">Checking login status...</p> : null}
 
@@ -195,6 +213,7 @@ export function CheckoutClient() {
               compact
               onVerified={(email) => {
                 setAuthenticatedEmail(email);
+                setStatusType("success");
                 setStatusMessage("Email verified. Continue checkout.");
               }}
             />
@@ -310,7 +329,7 @@ export function CheckoutClient() {
           <p className="muted order-summary-note">
             Free shipping above Rs. 2000, and above Rs. 1000 for Udaipur pincodes 313001-313005.
           </p>
-          {statusMessage ? <p className="muted">{statusMessage}</p> : null}
+          {statusMessage ? <p className={`checkout-notice checkout-notice--${statusType}`}>{statusMessage}</p> : null}
         </aside>
       </div>
     </>

@@ -10,7 +10,7 @@ type SendMailInput = {
 };
 
 function getTransporter() {
-  const host = process.env.SMTP_HOST;
+  const host = process.env.EMAIL_HOST ?? process.env.SMTP_HOST;
   const port = Number(process.env.SMTP_PORT ?? 587);
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
@@ -39,7 +39,7 @@ export async function sendMail(input: SendMailInput) {
   const from = process.env.SMTP_FROM ?? process.env.SMTP_USER;
 
   if (!transporter || !from) {
-    throw new Error("SMTP is not configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM.");
+    throw new Error("SMTP is not configured. Set EMAIL_HOST/SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM.");
   }
 
   await transporter.sendMail({

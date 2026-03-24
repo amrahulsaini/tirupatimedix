@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 type CartItem = {
   id: number;
+  imageUrl: string | null;
   productName: string;
   productSubtitle: string;
   unitPrice: number;
@@ -84,7 +85,7 @@ export function CartClient() {
     <div className="content-page container split-grid">
       <section className="info-card">
         <h1>Your Cart</h1>
-        <p className="muted">GST 5% is auto-applied. Enter pincode for instant shipping calculation.</p>
+        <p className="muted">Review your selected items and delivery details.</p>
 
         <label>
           Delivery Pincode
@@ -115,16 +116,25 @@ export function CartClient() {
           </div>
         ) : null}
 
-        <div className="list-reset" role="list">
+        <div className="list-reset cart-items-list" role="list">
           {data?.cart.items.map((item) => (
-            <article key={item.id} className="product-card" role="listitem">
-              <h3>{item.productName}</h3>
-              <p className="muted">{item.productSubtitle}</p>
-              <div className="price-row">
-                <strong>Rs. {item.unitPrice.toFixed(2)}</strong>
-                <span>Rs. {item.mrpPrice.toFixed(2)}</span>
+            <article key={item.id} className="cart-item-card" role="listitem">
+              <div className="cart-item-card__media">
+                {item.imageUrl ? (
+                  <img src={item.imageUrl} alt={item.productName} className="cart-item-card__image" />
+                ) : (
+                  <div className="cart-item-card__image cart-item-card__image--placeholder">No Image</div>
+                )}
               </div>
-              <div className="hero__cta">
+              <div className="cart-item-card__content">
+                <h3>{item.productName}</h3>
+                <p className="muted">{item.productSubtitle}</p>
+                <div className="price-row cart-item-card__price-row">
+                  <strong>Rs. {item.unitPrice.toFixed(2)}</strong>
+                  <span>Rs. {item.mrpPrice.toFixed(2)}</span>
+                </div>
+              </div>
+              <div className="hero__cta cart-item-card__actions">
                 <button
                   type="button"
                   className="btn btn-secondary"
