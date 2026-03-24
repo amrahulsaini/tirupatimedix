@@ -1,6 +1,8 @@
 "use client";
 
 import Script from "next/script";
+import { CheckCircle2, Gift, Truck } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { AuthEmailOtp } from "@/app/_components/auth-email-otp";
@@ -31,6 +33,10 @@ declare global {
 }
 
 export function CheckoutClient() {
+  const searchParams = useSearchParams();
+  const checkoutStatus = searchParams.get("status") ?? "";
+  const billNoFromQuery = searchParams.get("billNo") ?? "";
+
   const [authenticatedEmail, setAuthenticatedEmail] = useState<string | null>(null);
   const [loadingMe, setLoadingMe] = useState(true);
   const [loadingOrder, setLoadingOrder] = useState(false);
@@ -38,6 +44,8 @@ export function CheckoutClient() {
   const [statusType, setStatusType] = useState<"info" | "success" | "error">("info");
   const [pincode, setPincode] = useState("");
   const [cartSummary, setCartSummary] = useState<CartSummary | null>(null);
+  const [showFreeShippingPopup, setShowFreeShippingPopup] = useState(false);
+  const [freeShippingPopupShownForPincode, setFreeShippingPopupShownForPincode] = useState<string | null>(null);
   const [form, setForm] = useState({
     customerName: "",
     phone: "",
@@ -198,9 +206,63 @@ export function CheckoutClient() {
     void loadCartSummary(pincode);
   }, [pincode]);
 
+  useEffect(() => {
+    const isEligible =
+      pincode.length === 6 &&
+      !!cartSummary?.pricing.isUdaipurPincode &&
+      Number(cartSummary?.subtotal ?? 0) >= 1000 &&
+      Number(cartSummary?.pricing.shippingAmount ?? 0) === 0;
+
+    if (isEligible && freeShippingPopupShownForPincode !== pincode) {
+      setShowFreeShippingPopup(true);
+      setFreeShippingPopupShownForPincode(pincode);
+    }
+  }, [cartSummary, freeShippingPopupShownForPincode, pincode]);
+
+  if (checkoutStatus === "success") {
+    return (
+      <div className="content-page container">
+        <section className="info-card checkout-success-card">
+          <h1>
+            <CheckCircle2 size={28} />
+            Payment Successful
+          </h1>
+          <p className="muted">Your order has been confirmed and receipt has been sent on email.</p>
+          <div className="checkout-success-card__bill">Bill No: {billNoFromQuery || "N/A"}</div>
+          <div className="hero__cta">
+            <a className="btn btn-primary" href="/account">
+              View Order History
+            </a>
+            <a className="btn btn-secondary" href="/shop">
+              Continue Shopping
+            </a>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
+      {showFreeShippingPopup ? (
+        <div className="checkout-dialog-backdrop" role="presentation">
+          <div className="checkout-dialog" role="dialog" aria-modal="true" aria-label="Free shipping unlocked">
+            <h3>
+              <Gift size={18} /> Free Shipping Unlocked
+            </h3>
+            <p>
+              Your pincode is eligible for Udaipur special delivery and cart total is above Rs. 1000.
+            </p>
+            <p className="muted">
+              Shipping charge is now <strong>Free</strong>.
+            </p>
+            <button type="button" className="btn btn-primary" onClick={() => setShowFreeShippingPopup(false)}>
+              Great
+            </button>
+          </div>
+        </div>
+      ) : null}
       <div className="content-page container split-grid">
         <section className="info-card">
           <h1>Checkout</h1>
@@ -323,11 +385,8 @@ export function CheckoutClient() {
               <strong>Rs. {cartSummary?.pricing.total.toFixed(2) ?? "0.00"}</strong>
             </li>
           </ul>
-          <p className="order-summary-note">
-            GST is mandatory on all products.
-          </p>
           <p className="muted order-summary-note">
-            Free shipping above Rs. 2000, and above Rs. 1000 for Udaipur pincodes 313001-313005.
+            <Truck size={15} /> Free shipping above Rs. 2000. Udaipur pincodes 313001-313005 get free shipping above Rs. 1000.
           </p>
           {statusMessage ? <p className={`checkout-notice checkout-notice--${statusType}`}>{statusMessage}</p> : null}
         </aside>

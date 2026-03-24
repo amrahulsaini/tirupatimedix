@@ -12,6 +12,8 @@ export async function createAndSendOtp(emailInput: string) {
   const email = normalizeEmail(emailInput);
   const otp = generateOtp();
   const otpHash = hashOtp(email, otp);
+  const baseUrl = process.env.APP_BASE_URL ?? "https://tirupatimedix.com";
+  const logoUrl = `${baseUrl.replace(/\/$/, "")}/main-logo.webp`;
 
   await dbQuery(
     `INSERT INTO email_otps (email, otp_hash, expires_at)
@@ -22,12 +24,21 @@ export async function createAndSendOtp(emailInput: string) {
   await sendMail({
     to: email,
     subject: "Your Tirupati Medix OTP",
-    html: `<div style="font-family: Arial, sans-serif; line-height: 1.5;">
-      <h2>Tirupati Medix Login Verification</h2>
-      <p>Your OTP is:</p>
-      <p style="font-size: 26px; letter-spacing: 4px; font-weight: 700;">${otp}</p>
-      <p>This OTP is valid for 10 minutes.</p>
-      <p>If you did not request this, you can ignore this email.</p>
+    html: `<div style="background:#f5f7f4;padding:24px 10px;font-family:Arial,sans-serif;color:#13201b;">
+      <div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #d6dfd9;border-radius:14px;overflow:hidden;">
+        <div style="background:linear-gradient(90deg,#0f4f3a,#166249);padding:14px 18px;color:#fff;display:flex;align-items:center;gap:10px;">
+          <img src="${logoUrl}" alt="Tirupati Medix" width="34" height="34" style="border-radius:999px;background:#fff;padding:2px;" />
+          <strong style="font-size:16px;letter-spacing:0.02em;">Tirupati Medix</strong>
+        </div>
+        <div style="padding:20px;line-height:1.6;">
+          <h2 style="margin:0 0 8px;font-size:20px;">Login Verification</h2>
+          <p style="margin:0 0 12px;">Use the OTP below to continue:</p>
+          <div style="font-size:30px;letter-spacing:6px;font-weight:700;color:#0f4f3a;background:#edf4ee;border:1px dashed #166249;border-radius:10px;padding:10px 14px;display:inline-block;">${otp}</div>
+          <p style="margin:14px 0 0;">This OTP is valid for 10 minutes.</p>
+          <p style="margin:8px 0 0;color:#4e645b;">Did not receive OTP? Use the <strong>Resend OTP</strong> button on login screen.</p>
+          <p style="margin:14px 0 0;color:#4e645b;">If this was not you, you can safely ignore this email.</p>
+        </div>
+      </div>
     </div>`,
   });
 }

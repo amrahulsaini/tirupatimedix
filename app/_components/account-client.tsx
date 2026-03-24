@@ -9,10 +9,45 @@ type MeResult = {
   user?: { email: string };
 };
 
+type OrderItem = {
+  productName: string;
+  quantity: number;
+  lineTotal: number;
+};
+
+type OrderRecord = {
+  id: number;
+  billNo: string;
+  paymentStatus: string;
+  orderStatus: string;
+  totalAmount: number;
+  shippingAmount: number;
+  gstAmount: number;
+  createdAt: string;
+  items: OrderItem[];
+};
+
 export function AccountClient() {
   const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+
+  async function loadOrders() {
+    try {
+      setLoadingOrders(true);
+      const response = await fetch("/api/orders/history");
+      const result = await response.json();
+      if (!response.ok || !result.ok) {
+        setOrders([]);
+        return;
+      }
+      setOrders(result.orders ?? []);
+    } finally {
+      setLoadingOrders(false);
+    }
+  }
 
   async function refresh() {
     try {
@@ -21,8 +56,10 @@ export function AccountClient() {
       const result = (await response.json()) as MeResult;
       if (result.authenticated && result.user?.email) {
         setEmail(result.user.email);
+        await loadOrders();
       } else {
         setEmail(null);
+        setOrders([]);
       }
     } finally {
       setLoading(false);
@@ -38,6 +75,7 @@ export function AccountClient() {
     }
     setMessage("Logged out successfully.");
     setEmail(null);
+    setOrders([]);
   }
 
   useEffect(() => {
@@ -48,7 +86,7 @@ export function AccountClient() {
     <div className="content-page container split-grid">
       <section className="info-card">
         <h1>Profile</h1>
-        <p className="muted">Login using email OTP to manage checkout quickly.</p>
+        <p className="muted">Manage your account and review your previous orders.</p>
 
         {loading ? <p className="muted">Checking profile...</p> : null}
 
@@ -62,6 +100,45 @@ export function AccountClient() {
                 Logout
               </button>
             </div>
+
+            <div className="order-history-card">
+              <h3>Order History</h3>
+              {loadingOrders ? <p className="muted">Loading orders...</p> : null}
+              {!loadingOrders && orders.length === 0 ? (
+                <p className="muted">No orders found yet.</p>
+              ) : null}
+
+              {orders.map((order) => (
+                <article key={order.id} className="order-history-item">
+                  <div className="order-history-item__head">
+                    <div>
+                      <strong>{order.billNo}</strong>
+                      <p className="muted">{new Date(order.createdAt).toLocaleString("en-IN")}</p>
+                    </div>
+                    <div>
+                      <span className={`order-chip order-chip--${order.paymentStatus}`}>{order.paymentStatus}</span>
+                    </div>
+                  </div>
+
+                  <ul className="list-reset">
+                    {order.items.slice(0, 3).map((item, index) => (
+                      <li key={`${order.id}-${index}`}>
+                        <span>
+                          {item.productName} x {item.quantity}
+                        </span>
+                        <strong>Rs. {item.lineTotal.toFixed(2)}</strong>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="order-history-item__foot">
+                    <span>GST: Rs. {order.gstAmount.toFixed(2)}</span>
+                    <span>Shipping: Rs. {order.shippingAmount.toFixed(2)}</span>
+                    <strong>Total: Rs. {order.totalAmount.toFixed(2)}</strong>
+                  </div>
+                </article>
+              ))}
+            </div>
           </>
         ) : null}
 
@@ -70,6 +147,7 @@ export function AccountClient() {
             onVerified={(verifiedEmail) => {
               setEmail(verifiedEmail);
               setMessage("Login successful.");
+              void loadOrders();
             }}
           />
         ) : null}

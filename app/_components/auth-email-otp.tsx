@@ -13,6 +13,7 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
   const [step, setStep] = useState<"email" | "otp">("email");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
+  const [resendLoading, setResendLoading] = useState(false);
 
   async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 25000) {
     const controller = new AbortController();
@@ -80,6 +81,36 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
     }
   }
 
+  async function resendOtp() {
+    if (!email) {
+      setMessage("Please enter your email first.");
+      return;
+    }
+
+    try {
+      setResendLoading(true);
+      setMessage("");
+      const response = await fetchWithTimeout("/api/auth/request-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.ok) {
+        throw new Error(result.message ?? "Unable to resend OTP.");
+      }
+      setMessage("OTP resent successfully.");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        setMessage("Resend OTP timed out. Please try again.");
+      } else {
+        setMessage(error instanceof Error ? error.message : "Unable to resend OTP.");
+      }
+    } finally {
+      setResendLoading(false);
+    }
+  }
+
   return (
     <div className="auth-card">
       <h3>{compact ? "Login" : "Email Login"}</h3>
@@ -117,6 +148,14 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
           <>
             <button type="button" className="btn btn-primary" onClick={verifyOtp} disabled={loading}>
               {loading ? "Verifying..." : "Verify OTP"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={resendOtp}
+              disabled={resendLoading || loading}
+            >
+              {resendLoading ? "Resending..." : "Resend OTP"}
             </button>
             <button
               type="button"

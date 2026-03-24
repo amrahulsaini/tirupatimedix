@@ -183,9 +183,6 @@ export function CartClient() {
             <strong>Rs. {summary?.total.toFixed(2) ?? "0.00"}</strong>
           </li>
         </ul>
-        <p className="order-summary-note">
-          GST is mandatory on all products.
-        </p>
         <p className="muted order-summary-note">
           Free shipping above Rs. 2000, or above Rs. 1000 for Udaipur pincodes 313001-313005.
         </p>
