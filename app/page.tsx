@@ -20,6 +20,16 @@ export default async function Home() {
   const topMerilSemi = merilSemiProducts.slice(0, 6);
   const topDynamicTechno = dynamicTechnoProducts.slice(0, 6);
   const totalProducts = medicines.length + merilProducts.length + merilSemiProducts.length + dynamicTechnoProducts.length;
+  const recognizedBrands = [
+    { src: "/carasol/coloplast.webp", name: "Coloplast" },
+    { src: "/carasol/dynamic.webp", name: "Dynamic" },
+    { src: "/carasol/hollsiter.webp", name: "Hollister" },
+    { src: "/carasol/jmitra.webp", name: "J Mitra" },
+    { src: "/carasol/meril.webp", name: "Meril" },
+    { src: "/carasol/oscar.webp", name: "Oscar" },
+    { src: "/carasol/seiberr.webp", name: "Seiberr" },
+  ];
+  const marqueeBrands = [...recognizedBrands, ...recognizedBrands];
 
   return (
     <div className="landing-page">
@@ -68,6 +78,29 @@ export default async function Home() {
               <span className="showcase-card__arrow">&rarr;</span>
             </div>
           </Link>
+        </div>
+      </section>
+
+      <section className="container section">
+        <SectionTitle
+          eyebrow="Trusted Partners"
+          title="Shop By Recognised Brands"
+          subtitle="Leading medical brands we supply across India."
+        />
+        <div className="brand-carousel" aria-label="Recognised medical brands">
+          <div className="brand-carousel__track">
+            {marqueeBrands.map((brand, index) => (
+              <div
+                key={`${brand.name}-${index}`}
+                className="brand-carousel__item"
+                aria-hidden={index >= recognizedBrands.length}
+              >
+                <div className="brand-carousel__oval">
+                  <img src={brand.src} alt={`${brand.name} logo`} loading="lazy" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
