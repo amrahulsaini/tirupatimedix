@@ -183,9 +183,6 @@ export function CartClient() {
             <strong>Rs. {summary?.total.toFixed(2) ?? "0.00"}</strong>
           </li>
         </ul>
-        <p className="muted order-summary-note">
-          Free shipping above Rs. 2000, or above Rs. 1000 for Udaipur pincodes 313001-313005.
-        </p>
         <div className="hero__cta order-summary-actions">
           <Link href="/checkout" className="btn btn-primary">
             Proceed to Checkout

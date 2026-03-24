@@ -43,7 +43,7 @@ export async function GET() {
 
   const orderIds = orders.map((order) => order.id);
 
-  let itemsByOrder = new Map<number, Array<{ productName: string; quantity: number; lineTotal: number }>>();
+  let itemsByOrder = new Map<number, Array<{ productName: string; quantity: number; lineTotal: number; imageUrl: string | null }>>();
 
   if (orderIds.length > 0) {
     const placeholders = orderIds.map(() => "?").join(",");
@@ -53,9 +53,10 @@ export async function GET() {
         product_name: string;
         quantity: number;
         line_total: number;
+        image_url: string | null;
       }>
     >(
-      `SELECT order_id, product_name, quantity, line_total
+      `SELECT order_id, product_name, quantity, line_total, image_url
        FROM order_items
        WHERE order_id IN (${placeholders})
        ORDER BY id ASC`,
@@ -68,10 +69,11 @@ export async function GET() {
         productName: item.product_name,
         quantity: Number(item.quantity),
         lineTotal: Number(item.line_total),
+        imageUrl: item.image_url,
       });
       acc.set(item.order_id, row);
       return acc;
-    }, new Map<number, Array<{ productName: string; quantity: number; lineTotal: number }>>());
+    }, new Map<number, Array<{ productName: string; quantity: number; lineTotal: number; imageUrl: string | null }>>());
   }
 
   return NextResponse.json({

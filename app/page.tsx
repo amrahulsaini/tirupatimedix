@@ -78,24 +78,27 @@ export default async function Home() {
           subtitle="Essential picks with transparent pricing and quick-compare display."
         />
         <div className="product-grid">
-          {topHollister.map((item) => (
-            <article key={item.id} className="product-card">
-              <div className="product-card__badge-row">
-                <span className="stock stock--ok">Pack: {item.packingPerBox}</span>
-              </div>
-              {item.images[0] ? (
-                <img src={item.images[0]} alt={item.genericName} className="db-medicine-image" />
-              ) : null}
-              <h3>{item.genericName} – {item.code}</h3>
-              <div className="price-row">
-                <strong>₹{item.cutPrice.toFixed(2)}</strong>
-                <span>₹{item.mrpUnits.toFixed(2)}</span>
-                <em>Best Price</em>
-              </div>
-              <p className="gst-note">+ 5% GST mandatory</p>
-              <ShopProductActions productType="hollister" productId={item.id} />
-            </article>
-          ))}
+          {topHollister.map((item) => {
+            const discountPercent = Math.max(0, Math.round(((item.mrpUnits - item.cutPrice) / item.mrpUnits) * 100));
+            return (
+              <article key={item.id} className="product-card">
+                <div className="product-card__badge-row">
+                  <span className="stock stock--ok">Pack: {item.packingPerBox}</span>
+                </div>
+                {item.images[0] ? (
+                  <img src={item.images[0]} alt={item.genericName} className="db-medicine-image" />
+                ) : null}
+                <h3>{item.genericName} – {item.code}</h3>
+                <p className="discount-note">Save {discountPercent}% on MRP</p>
+                <div className="price-row">
+                  <strong>₹{item.cutPrice.toFixed(2)}</strong>
+                  <span>₹{item.mrpUnits.toFixed(2)}</span>
+                  <em>Best Price</em>
+                </div>
+                <ShopProductActions productType="hollister" productId={item.id} />
+              </article>
+            );
+          })}
         </div>
         <div className="view-all-row">
           <Link className="btn btn-primary" href="/shop/ostomy-care">View All Ostomy Care Products</Link>
@@ -109,38 +112,44 @@ export default async function Home() {
           subtitle="Precision-focused reagents curated for labs and hospital workflows."
         />
         <div className="product-grid">
-          {topMeril.map((item) => (
-            <article key={item.id} className="product-card meril-card">
-              {item.images[0] ? (
-                <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
-              ) : null}
-              <h3>{item.productName} – {item.srNo}</h3>
-              <p className="muted">Pack Size: {item.packSize}</p>
-              <div className="price-row">
-                <strong>₹{item.cutPrice.toFixed(2)}</strong>
-                <span>₹{item.mrpUnits.toFixed(2)}</span>
-                <em>Best Price</em>
-              </div>
-              <p className="gst-note">+ 5% GST mandatory</p>
-              <ShopProductActions productType="meril_fa" productId={item.id} />
-            </article>
-          ))}
-          {topMerilSemi.map((item) => (
-            <article key={`semi-${item.id}`} className="product-card meril-card meril-semi-card">
-              {item.images[0] ? (
-                <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
-              ) : null}
-              <h3>{item.productName} – {item.srNo}</h3>
-              <p className="muted">Pack Size: {item.packSize}</p>
-              <div className="price-row">
-                <strong>₹{item.cutPrice.toFixed(2)}</strong>
-                <span>₹{item.mrpUnits.toFixed(2)}</span>
-                <em>Best Price</em>
-              </div>
-              <p className="gst-note">+ 5% GST mandatory</p>
-              <ShopProductActions productType="meril_sa" productId={item.id} />
-            </article>
-          ))}
+          {topMeril.map((item) => {
+            const discountPercent = Math.max(0, Math.round(((item.mrpUnits - item.cutPrice) / item.mrpUnits) * 100));
+            return (
+              <article key={item.id} className="product-card meril-card">
+                {item.images[0] ? (
+                  <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
+                ) : null}
+                <h3>{item.productName} – {item.srNo}</h3>
+                <p className="muted">Pack Size: {item.packSize}</p>
+                <p className="discount-note">Save {discountPercent}% on MRP</p>
+                <div className="price-row">
+                  <strong>₹{item.cutPrice.toFixed(2)}</strong>
+                  <span>₹{item.mrpUnits.toFixed(2)}</span>
+                  <em>Best Price</em>
+                </div>
+                <ShopProductActions productType="meril_fa" productId={item.id} />
+              </article>
+            );
+          })}
+          {topMerilSemi.map((item) => {
+            const discountPercent = Math.max(0, Math.round(((item.mrpUnits - item.cutPrice) / item.mrpUnits) * 100));
+            return (
+              <article key={`semi-${item.id}`} className="product-card meril-card meril-semi-card">
+                {item.images[0] ? (
+                  <img src={item.images[0]} alt={item.productName} className="db-medicine-image" />
+                ) : null}
+                <h3>{item.productName} – {item.srNo}</h3>
+                <p className="muted">Pack Size: {item.packSize}</p>
+                <p className="discount-note">Save {discountPercent}% on MRP</p>
+                <div className="price-row">
+                  <strong>₹{item.cutPrice.toFixed(2)}</strong>
+                  <span>₹{item.mrpUnits.toFixed(2)}</span>
+                  <em>Best Price</em>
+                </div>
+                <ShopProductActions productType="meril_sa" productId={item.id} />
+              </article>
+            );
+          })}
         </div>
         <div className="view-all-row">
           <Link className="btn btn-primary" href="/shop/pathology-products">View All Pathology Products</Link>
@@ -154,22 +163,25 @@ export default async function Home() {
           subtitle="Sterizone, NewMom & Sego wound care and post-operative products."
         />
         <div className="product-grid">
-          {topDynamicTechno.map((item) => (
-            <article key={item.id} className="product-card wound-dressing-card">
-              {item.images[0] ? (
-                <img src={item.images[0]} alt={item.productDescription} className="db-medicine-image" />
-              ) : null}
-              <h3>{item.productDescription} – {item.itemCode}</h3>
-              <p className="muted">{item.brandName} · Size: {item.size}</p>
-              <div className="price-row">
-                <strong>₹{item.cutPrice.toFixed(2)}</strong>
-                <span>₹{item.mrp.toFixed(2)}</span>
-                <em>Best Price</em>
-              </div>
-              <p className="gst-note">+ 5% GST mandatory</p>
-              <ShopProductActions productType="dynamic" productId={item.id} />
-            </article>
-          ))}
+          {topDynamicTechno.map((item) => {
+            const discountPercent = Math.max(0, Math.round(((item.mrp - item.cutPrice) / item.mrp) * 100));
+            return (
+              <article key={item.id} className="product-card wound-dressing-card">
+                {item.images[0] ? (
+                  <img src={item.images[0]} alt={item.productDescription} className="db-medicine-image" />
+                ) : null}
+                <h3>{item.productDescription} – {item.itemCode}</h3>
+                <p className="muted">{item.brandName} · Size: {item.size}</p>
+                <p className="discount-note">Save {discountPercent}% on MRP</p>
+                <div className="price-row">
+                  <strong>₹{item.cutPrice.toFixed(2)}</strong>
+                  <span>₹{item.mrp.toFixed(2)}</span>
+                  <em>Best Price</em>
+                </div>
+                <ShopProductActions productType="dynamic" productId={item.id} />
+              </article>
+            );
+          })}
         </div>
         <div className="view-all-row">
           <Link className="btn btn-primary" href="/shop/wound-dressing">View All Wound Dressing Products</Link>

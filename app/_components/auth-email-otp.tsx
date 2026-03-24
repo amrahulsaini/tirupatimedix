@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type AuthEmailOtpProps = {
   onVerified?: (email: string) => void;
@@ -14,6 +14,17 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [resendLoading, setResendLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+
+    const interval = setInterval(() => {
+      setResendCooldown((value) => (value > 0 ? value - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [resendCooldown]);
 
   async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 25000) {
     const controller = new AbortController();
@@ -43,6 +54,7 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
         throw new Error(result.message ?? "Unable to send OTP.");
       }
       setStep("otp");
+      setResendCooldown(30);
       setMessage("OTP sent to your email.");
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
@@ -87,6 +99,11 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
       return;
     }
 
+    if (resendCooldown > 0) {
+      setMessage(`Please wait ${resendCooldown}s before requesting another OTP.`);
+      return;
+    }
+
     try {
       setResendLoading(true);
       setMessage("");
@@ -99,6 +116,7 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
       if (!response.ok || !result.ok) {
         throw new Error(result.message ?? "Unable to resend OTP.");
       }
+      setResendCooldown(30);
       setMessage("OTP resent successfully.");
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
@@ -153,9 +171,9 @@ export function AuthEmailOtp({ onVerified, compact = false }: AuthEmailOtpProps)
               type="button"
               className="btn btn-secondary"
               onClick={resendOtp}
-              disabled={resendLoading || loading}
+              disabled={resendLoading || loading || resendCooldown > 0}
             >
-              {resendLoading ? "Resending..." : "Resend OTP"}
+              {resendLoading ? "Resending..." : resendCooldown > 0 ? `Resend OTP (${resendCooldown}s)` : "Resend OTP"}
             </button>
             <button
               type="button"

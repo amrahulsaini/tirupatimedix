@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { CircleCheckBig, LogOut, MapPin, Menu, Search, ShoppingCart, Truck, UserRound, X } from "lucide-react";
+import { LogOut, Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const navLinks = [
@@ -13,22 +13,12 @@ const navLinks = [
   { href: "/faq", label: "FAQ" },
 ];
 
-const shippingHighlights = [
-  {
-    key: "default-free-shipping",
-    icon: Truck,
-    text: "Free Shipping above ₹2000",
-  },
-  {
-    key: "udaipur-free-shipping",
-    icon: MapPin,
-    text: "Udaipur (313001-313005): Free Shipping above ₹1000",
-  },
-  {
-    key: "trusted-products",
-    icon: CircleCheckBig,
-    text: "100% genuine medical products",
-  },
+const announcements = [
+  "Free Shipping above ₹2000",
+  "Udaipur (313001-313005): Free Shipping above ₹1000",
+  "Delivery in 4 to 5 days",
+  "100% genuine medical products",
+  "Need help? Talk to a pharmacist at Contact",
 ];
 
 export function SiteHeader() {
@@ -55,16 +45,21 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="top-strip" aria-label="Announcements">
-        <div className="container top-strip__highlights">
-          {shippingHighlights.map((item) => {
-            const Icon = item.icon;
-            return (
-              <span key={item.key} className="top-strip__badge">
-                <Icon size={15} />
-                <span>{item.text}</span>
+        <div className="container top-strip__rotator">
+          <div className="top-strip__rotator-track">
+            {announcements.map((message, index) => (
+              <span
+                key={message}
+                className="top-strip__item"
+                style={{
+                  ["--announcement-index" as string]: index,
+                  ["--announcement-count" as string]: announcements.length,
+                }}
+              >
+                {message}
               </span>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
       <div className="container nav-shell">

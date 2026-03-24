@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { CheckCircle2, Gift, Truck } from "lucide-react";
+import { CheckCircle2, Gift } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -385,9 +385,6 @@ export function CheckoutClient() {
               <strong>Rs. {cartSummary?.pricing.total.toFixed(2) ?? "0.00"}</strong>
             </li>
           </ul>
-          <p className="muted order-summary-note">
-            <Truck size={15} /> Free shipping above Rs. 2000. Udaipur pincodes 313001-313005 get free shipping above Rs. 1000.
-          </p>
           {statusMessage ? <p className={`checkout-notice checkout-notice--${statusType}`}>{statusMessage}</p> : null}
         </aside>
       </div>

@@ -13,6 +13,7 @@ type OrderItem = {
   productName: string;
   quantity: number;
   lineTotal: number;
+  imageUrl: string | null;
 };
 
 type OrderRecord = {
@@ -123,8 +124,11 @@ export function AccountClient() {
                   <ul className="list-reset">
                     {order.items.slice(0, 3).map((item, index) => (
                       <li key={`${order.id}-${index}`}>
-                        <span>
-                          {item.productName} x {item.quantity}
+                        <span className="order-history-item__product">
+                          {item.imageUrl ? <img src={item.imageUrl} alt={item.productName} /> : null}
+                          <span>
+                            {item.productName} x {item.quantity}
+                          </span>
                         </span>
                         <strong>Rs. {item.lineTotal.toFixed(2)}</strong>
                       </li>

@@ -84,30 +84,6 @@ a {
   overflow: clip;
 }
 
-.top-strip__highlights {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  padding: 0.35rem 0;
-}
-
-.top-strip__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.38rem;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-  color: #f5fff9;
-  padding: 0.22rem 0.65rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
 .top-strip__rotator {
   height: 44px;
   position: relative;
@@ -702,6 +678,13 @@ a {
   font-weight: 700;
 }
 
+.discount-note {
+  margin: 0.15rem 0 0.5rem;
+  font-size: 0.8rem;
+  color: #17653f;
+  font-weight: 700;
+}
+
 .auth-card {
   border: 1px solid var(--stroke);
   border-radius: 14px;
@@ -1149,6 +1132,22 @@ textarea:focus {
   justify-content: space-between;
   align-items: flex-start;
   gap: 0.65rem;
+}
+
+.order-history-item__product {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.order-history-item__product img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid rgba(19, 32, 27, 0.08);
+  background: linear-gradient(180deg, #fafcfb 0%, #f0f5f2 100%);
+  padding: 0.22rem;
 }
 
 .order-history-item__foot {
@@ -1677,14 +1676,16 @@ textarea:focus {
     display: block;
   }
 
-  .top-strip__highlights {
-    justify-content: flex-start;
-    padding: 0.45rem 0;
+  .top-strip__rotator {
+    height: 36px;
   }
 
-  .top-strip__badge {
-    font-size: 0.76rem;
-    padding: 0.2rem 0.55rem;
+  .top-strip__item {
+    font-size: 0.82rem;
+    max-width: calc(100% - 0.75rem);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 0.15rem 0.2rem;
   }
 
   .nav-shell {
