@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LogOut, Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
@@ -25,13 +25,11 @@ const announcements = [
 export function SiteHeader() {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const currentSearchQuery = (pathname === "/" || pathname === "/search") ? (searchParams.get("q") ?? "") : "";
 
   useEffect(() => {
     async function fetchMe() {
@@ -125,8 +123,12 @@ export function SiteHeader() {
             aria-label={isSearchOpen ? "Close product search" : "Open product search"}
             aria-expanded={isSearchOpen}
             onClick={() => {
-              if (!isSearchOpen && !searchQuery.trim() && currentSearchQuery) {
-                setSearchQuery(currentSearchQuery);
+              if (!isSearchOpen && !searchQuery.trim() && (pathname === "/" || pathname === "/search")) {
+                const params = new URLSearchParams(window.location.search);
+                const currentSearchQuery = params.get("q") ?? "";
+                if (currentSearchQuery) {
+                  setSearchQuery(currentSearchQuery);
+                }
               }
               setIsSearchOpen((current) => !current);
             }}
