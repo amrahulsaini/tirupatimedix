@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Script from "next/script";
 import { CheckCircle2, Gift } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -13,6 +14,14 @@ type MeResponse = {
 };
 
 type CartSummary = {
+  items: Array<{
+    id: number;
+    imageUrl: string | null;
+    productName: string;
+    productSubtitle: string;
+    quantity: number;
+    lineTotal: number;
+  }>;
   subtotal: number;
   pricing: {
     gstPercent: number;
@@ -92,6 +101,7 @@ export function CheckoutClient() {
     }
 
     setCartSummary({
+      items: Array.isArray(result.cart?.items) ? result.cart.items : [],
       subtotal: Number(result.cart?.subtotal ?? 0),
       pricing: result.pricing,
       shippingMessage: result.shippingNote,
@@ -230,12 +240,12 @@ export function CheckoutClient() {
           <p className="muted">Your order has been confirmed and receipt has been sent on email.</p>
           <div className="checkout-success-card__bill">Bill No: {billNoFromQuery || "N/A"}</div>
           <div className="hero__cta">
-            <a className="btn btn-primary" href="/account">
+            <Link className="btn btn-primary" href="/account">
               View Order History
-            </a>
-            <a className="btn btn-secondary" href="/shop">
+            </Link>
+            <Link className="btn btn-secondary" href="/shop">
               Continue Shopping
-            </a>
+            </Link>
           </div>
         </section>
       </div>
@@ -363,6 +373,31 @@ export function CheckoutClient() {
 
         <aside className="info-card order-summary-card">
           <h3>Order Summary</h3>
+          {cartSummary?.items.length ? (
+            <div className="checkout-summary-items">
+              {cartSummary.items.map((item) => (
+                <article key={item.id} className="checkout-summary-item">
+                  <div className="checkout-summary-item__media">
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt={item.productName} className="checkout-summary-item__image" />
+                    ) : (
+                      <div className="checkout-summary-item__image checkout-summary-item__image--placeholder">
+                        No Image
+                      </div>
+                    )}
+                  </div>
+                  <div className="checkout-summary-item__content">
+                    <h4>{item.productName}</h4>
+                    <p className="muted">{item.productSubtitle}</p>
+                    <div className="checkout-summary-item__meta">
+                      <span>Qty: {item.quantity}</span>
+                      <strong>Rs. {item.lineTotal.toFixed(2)}</strong>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : null}
           <ul className="list-reset order-summary-list">
             <li>
               <span>Subtotal</span>

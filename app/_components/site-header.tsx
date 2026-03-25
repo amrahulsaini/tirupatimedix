@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { LogOut, Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -25,9 +25,13 @@ const announcements = [
 export function SiteHeader() {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const currentSearchQuery = (pathname === "/" || pathname === "/search") ? (searchParams.get("q") ?? "") : "";
 
   useEffect(() => {
     async function fetchMe() {
@@ -40,11 +44,12 @@ export function SiteHeader() {
   }, []);
 
   useEffect(() => {
-    if (pathname === "/" || pathname === "/search") {
-      const params = new URLSearchParams(window.location.search);
-      setSearchQuery(params.get("q") ?? "");
+    if (!isSearchOpen) {
+      return;
     }
-  }, [pathname]);
+
+    searchInputRef.current?.focus();
+  }, [isSearchOpen]);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -57,11 +62,13 @@ export function SiteHeader() {
     event.preventDefault();
     const query = searchQuery.trim();
     if (!query) {
+      setIsSearchOpen(false);
       router.push("/");
       return;
     }
 
     router.push(`/?q=${encodeURIComponent(query)}#search-results`);
+    setIsSearchOpen(false);
     setIsOpen(false);
   }
 
@@ -112,8 +119,27 @@ export function SiteHeader() {
         </nav>
 
         <div className="nav-actions">
-          <form className="header-search" role="search" onSubmit={handleSearchSubmit}>
+          <button
+            type="button"
+            className={`header-search-toggle ${isSearchOpen ? "header-search-toggle--active" : ""}`}
+            aria-label={isSearchOpen ? "Close product search" : "Open product search"}
+            aria-expanded={isSearchOpen}
+            onClick={() => {
+              if (!isSearchOpen && !searchQuery.trim() && currentSearchQuery) {
+                setSearchQuery(currentSearchQuery);
+              }
+              setIsSearchOpen((current) => !current);
+            }}
+          >
+            <Search size={18} />
+          </button>
+          <form
+            className={`header-search ${isSearchOpen ? "header-search--open" : ""}`}
+            role="search"
+            onSubmit={handleSearchSubmit}
+          >
             <input
+              ref={searchInputRef}
               type="search"
               placeholder="Search by code or name"
               aria-label="Search products"
@@ -124,18 +150,6 @@ export function SiteHeader() {
               <Search size={16} />
             </button>
           </form>
-          <button
-            type="button"
-            className="header-search-mobile"
-            aria-label="Open product search page"
-            onClick={() =>
-              router.push(
-                searchQuery.trim() ? `/search?q=${encodeURIComponent(searchQuery.trim())}` : "/search"
-              )
-            }
-          >
-            <Search size={18} />
-          </button>
           <Link href="/account" aria-label="Profile login">
             <UserRound size={18} />
           </Link>
