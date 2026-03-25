@@ -40,7 +40,7 @@ export function SiteHeader() {
   }, []);
 
   useEffect(() => {
-    if (pathname === "/") {
+    if (pathname === "/" || pathname === "/search") {
       const params = new URLSearchParams(window.location.search);
       setSearchQuery(params.get("q") ?? "");
     }
@@ -127,10 +127,10 @@ export function SiteHeader() {
           <button
             type="button"
             className="header-search-mobile"
-            aria-label="Open product search"
+            aria-label="Open product search page"
             onClick={() =>
               router.push(
-                searchQuery.trim() ? `/?q=${encodeURIComponent(searchQuery.trim())}#search-results` : "/"
+                searchQuery.trim() ? `/search?q=${encodeURIComponent(searchQuery.trim())}` : "/search"
               )
             }
           >
