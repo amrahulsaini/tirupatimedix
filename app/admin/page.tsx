@@ -219,10 +219,6 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <input name="packing_per_box" type="number" min={1} step={1} required />
           </label>
           <label>
-            DP Units
-            <input name="dp_units" type="number" min={0} step="0.01" required />
-          </label>
-          <label>
             MRP Units
             <input name="mrp_units" type="number" min={0} step="0.01" required />
           </label>
@@ -275,17 +271,6 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   min={1}
                   step={1}
                   defaultValue={medicine.packingPerBox}
-                  required
-                />
-              </label>
-              <label>
-                DP Units
-                <input
-                  name="dp_units"
-                  type="number"
-                  min={0}
-                  step="0.01"
-                  defaultValue={medicine.dpUnits}
                   required
                 />
               </label>

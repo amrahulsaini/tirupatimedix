@@ -114,7 +114,6 @@ async function OstomyCareSection() {
                       <img src={item.images[0]} alt={item.genericName} className="db-medicine-image" />
                     ) : null}
                     <h3>{item.genericName} – {item.code}</h3>
-                    <p className="muted">DP: ₹{item.dpUnits.toFixed(2)} per unit</p>
                     <p className="discount-note">Save {discountPercent}% on MRP</p>
                     <div className="price-row">
                       <strong>₹{item.cutPrice.toFixed(2)}</strong>

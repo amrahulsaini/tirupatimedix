@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS hollister (
     category VARCHAR(100) NOT NULL,
     generic_name VARCHAR(255) NOT NULL,
     packing_per_box INT NOT NULL,
-    dp_units DECIMAL(10, 2) NOT NULL,
     mrp_units DECIMAL(10, 2) NOT NULL,
     cut_price DECIMAL(10, 2) NOT NULL
 );

@@ -71,7 +71,6 @@ export async function POST(request: Request) {
         const category = toText(formData.get("category"));
         const genericName = toText(formData.get("generic_name"));
         const packingPerBox = toNumber(formData.get("packing_per_box"));
-        const dpUnits = toNumber(formData.get("dp_units"));
         const mrpUnits = toNumber(formData.get("mrp_units"));
         const cutPrice = toNumber(formData.get("cut_price"));
 
@@ -81,9 +80,9 @@ export async function POST(request: Request) {
         }
 
         await dbQuery(
-          `INSERT INTO hollister (code, category, generic_name, packing_per_box, dp_units, mrp_units, cut_price)
-           VALUES (?, ?, ?, ?, ?, ?, ?)`,
-          [code, category, genericName, packingPerBox, dpUnits, mrpUnits, cutPrice]
+          `INSERT INTO hollister (code, category, generic_name, packing_per_box, mrp_units, cut_price)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [code, category, genericName, packingPerBox, mrpUnits, cutPrice]
         );
         break;
       }
@@ -94,7 +93,6 @@ export async function POST(request: Request) {
         const category = toText(formData.get("category"));
         const genericName = toText(formData.get("generic_name"));
         const packingPerBox = toNumber(formData.get("packing_per_box"));
-        const dpUnits = toNumber(formData.get("dp_units"));
         const mrpUnits = toNumber(formData.get("mrp_units"));
         const cutPrice = toNumber(formData.get("cut_price"));
 
@@ -105,9 +103,9 @@ export async function POST(request: Request) {
 
         await dbQuery(
           `UPDATE hollister
-           SET code = ?, category = ?, generic_name = ?, packing_per_box = ?, dp_units = ?, mrp_units = ?, cut_price = ?
+           SET code = ?, category = ?, generic_name = ?, packing_per_box = ?, mrp_units = ?, cut_price = ?
            WHERE id = ?`,
-          [code, category, genericName, packingPerBox, dpUnits, mrpUnits, cutPrice, id]
+          [code, category, genericName, packingPerBox, mrpUnits, cutPrice, id]
         );
         break;
       }

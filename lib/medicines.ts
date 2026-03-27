@@ -8,7 +8,6 @@ export type Medicine = {
   category: string;
   genericName: string;
   packingPerBox: number;
-  dpUnits: number;
   mrpUnits: number;
   cutPrice: number;
   images: string[];
@@ -21,7 +20,6 @@ type MedicineRow = {
   category: string;
   generic_name: string;
   packing_per_box: number;
-  dp_units: number;
   mrp_units: number;
   cut_price: number;
 };
@@ -43,7 +41,6 @@ function mapMedicine(
     category: row.category,
     genericName: row.generic_name,
     packingPerBox: row.packing_per_box,
-    dpUnits: Number(row.dp_units),
     mrpUnits: Number(row.mrp_units),
     cutPrice: Number(row.cut_price),
     images: imageItems.map((item) => item.path),
@@ -55,7 +52,7 @@ export async function getAllMedicines() {
   await ensureDatabaseSchema();
 
   const [medicineRows] = await dbQuery<MedicineRow[]>(
-    `SELECT id, code, category, generic_name, packing_per_box, dp_units, mrp_units, cut_price
+    `SELECT id, code, category, generic_name, packing_per_box, mrp_units, cut_price
       FROM hollister
      ORDER BY category ASC, generic_name ASC`
   );
