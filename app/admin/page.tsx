@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { Lock, LogOut, Plus, Save, Trash2, Upload, Filter } from "lucide-react";
+import { Lock, LogOut, Plus, Save, Search, Trash2, Upload, Filter } from "lucide-react";
 import { AdminQueryCleaner } from "@/app/admin/_components/admin-query-cleaner";
 import { AdminImageUploadForm } from "@/app/admin/_components/admin-image-upload-form";
 import { getAllMerilProducts } from "@/lib/meril";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 type AdminPageProps = {
-  searchParams: Promise<{ error?: string; upload?: string; action?: string; status?: string; tab?: string }>;
+  searchParams: Promise<{ error?: string; upload?: string; action?: string; status?: string; tab?: string; search?: string }>;
 };
 
 function getAdminActionMessage(action?: string, status?: string) {
@@ -62,7 +62,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   const params = await searchParams;
   const hasQueryFeedback = Boolean(params.error || params.upload || params.action || params.status);
   const actionMessage = getAdminActionMessage(params.action, params.status);
-  const activeTab = params.tab || "all";
+  const adminSearch = (params.search ?? "").trim();
+  const activeTab = adminSearch ? "search" : (params.tab || "all");
   const cookieStore = await cookies();
   const isLoggedIn = cookieStore.get("medix_admin_session")?.value === "1";
 
@@ -179,6 +180,23 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         </form>
       </section>
 
+      <form action="/admin" className="admin-search-bar" role="search">
+        <Search size={18} />
+        <input
+          type="search"
+          name="search"
+          defaultValue={adminSearch}
+          placeholder="Search by product code, name, brand..."
+          aria-label="Search admin products"
+        />
+        <button type="submit" className="btn btn-primary">
+          Search
+        </button>
+        {adminSearch ? (
+          <a href="/admin" className="btn btn-secondary">Clear</a>
+        ) : null}
+      </form>
+
       <nav className="admin-category-tabs">
         <Link href="/admin?tab=all" className={`admin-tab${activeTab === "all" ? " admin-tab--active" : ""}`}>
           <Filter size={14} /> All Categories
@@ -196,6 +214,264 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           Wound Dressing ({dynamicTechnoProducts.length})
         </Link>
       </nav>
+
+      {activeTab === "search" && (() => {
+        const q = adminSearch.toLowerCase();
+        const matchedMedicines = medicines.filter((m) =>
+          m.code.toLowerCase().includes(q) || m.genericName.toLowerCase().includes(q) || m.category.toLowerCase().includes(q)
+        );
+        const matchedMeril = merilProducts.filter((m) =>
+          String(m.srNo).includes(q) || m.productName.toLowerCase().includes(q) || m.category.toLowerCase().includes(q)
+        );
+        const matchedMerilSemi = merilSemiProducts.filter((m) =>
+          String(m.srNo).includes(q) || m.productName.toLowerCase().includes(q) || m.category.toLowerCase().includes(q)
+        );
+        const matchedDynamic = dynamicTechnoProducts.filter((m) =>
+          m.itemCode.toLowerCase().includes(q) || m.productDescription.toLowerCase().includes(q) || m.brandName.toLowerCase().includes(q)
+        );
+        const totalResults = matchedMedicines.length + matchedMeril.length + matchedMerilSemi.length + matchedDynamic.length;
+
+        return (
+          <section className="admin-search-results">
+            <div className="info-card">
+              <h2>
+                <Search size={18} /> Search Results for &ldquo;{adminSearch}&rdquo;
+              </h2>
+              <p className="muted">{totalResults} product{totalResults !== 1 ? "s" : ""} found across all categories.</p>
+            </div>
+
+            {totalResults === 0 ? (
+              <div className="info-card">
+                <h3>No matching products</h3>
+                <p className="muted">Try a shorter keyword or product code.</p>
+              </div>
+            ) : null}
+
+            {matchedMedicines.length > 0 ? (
+              <>
+                <h3 className="admin-search-group-title">Ostomy Care ({matchedMedicines.length})</h3>
+                <div className="admin-medicine-list">
+                  {matchedMedicines.map((medicine) => (
+                    <article key={medicine.id} className="info-card admin-medicine-card">
+                      <div className="admin-card-head">
+                        <h3>
+                          {medicine.genericName} <span className="pill">Code: {medicine.code}</span>
+                        </h3>
+                        <form action="/admin/mutate" method="post">
+                          <input type="hidden" name="op" value="delete-medicine" />
+                          <input type="hidden" name="id" value={medicine.id} />
+                          <button type="submit" className="btn btn-secondary">
+                            <Trash2 size={16} /> Delete
+                          </button>
+                        </form>
+                      </div>
+                      <form action="/admin/mutate" method="post" className="admin-grid-form">
+                        <input type="hidden" name="op" value="update-medicine" />
+                        <input type="hidden" name="id" value={medicine.id} />
+                        <label>Code<input name="code" defaultValue={medicine.code} required /></label>
+                        <label>Category<input name="category" defaultValue={medicine.category} required /></label>
+                        <label className="admin-span-2">Generic Name<input name="generic_name" defaultValue={medicine.genericName} required /></label>
+                        <label>Packing Per Box<input name="packing_per_box" type="number" min={1} step={1} defaultValue={medicine.packingPerBox} required /></label>
+                        <label>MRP Units<input name="mrp_units" type="number" min={0} step="0.01" defaultValue={medicine.mrpUnits} required /></label>
+                        <label>Cut Price<input name="cut_price" type="number" min={0} step="0.01" defaultValue={medicine.cutPrice} required /></label>
+                        <button type="submit" className="btn btn-primary admin-span-2"><Save size={16} /> Save Changes</button>
+                      </form>
+                      <div className="admin-images-block">
+                        <h4>Images</h4>
+                        <AdminImageUploadForm entityId={medicine.id} target="medicine" />
+                        <div className="admin-image-grid">
+                          {medicine.imageItems.length === 0 ? (
+                            <p className="muted">No images uploaded yet.</p>
+                          ) : (
+                            medicine.imageItems.map((image, index) => (
+                              <div key={image.id} className="admin-image-item">
+                                <img src={image.path} alt={`${medicine.genericName} ${index + 1}`} />
+                                <form action="/admin/mutate" method="post">
+                                  <input type="hidden" name="op" value="delete-image" />
+                                  <input type="hidden" name="image_id" value={image.id} />
+                                  <input type="hidden" name="image_path" value={image.path} />
+                                  <button type="submit" className="btn btn-secondary">Remove</button>
+                                </form>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {matchedMeril.length > 0 ? (
+              <>
+                <h3 className="admin-search-group-title">Pathology – Fully Auto ({matchedMeril.length})</h3>
+                <div className="admin-medicine-list">
+                  {matchedMeril.map((item) => (
+                    <article key={item.id} className="info-card admin-medicine-card">
+                      <div className="admin-card-head">
+                        <h3>
+                          {item.productName} <span className="pill">SR: {item.srNo}</span>
+                        </h3>
+                        <form action="/admin/mutate" method="post">
+                          <input type="hidden" name="op" value="delete-meril" />
+                          <input type="hidden" name="id" value={item.id} />
+                          <button type="submit" className="btn btn-secondary"><Trash2 size={16} /> Delete</button>
+                        </form>
+                      </div>
+                      <form action="/admin/mutate" method="post" className="admin-grid-form">
+                        <input type="hidden" name="op" value="update-meril" />
+                        <input type="hidden" name="id" value={item.id} />
+                        <label>Sr. No<input name="sr_no" type="number" min={1} step={1} defaultValue={item.srNo} required /></label>
+                        <label>Category<input name="category" defaultValue={item.category} required /></label>
+                        <label className="admin-span-2">Product Name<input name="product_name" defaultValue={item.productName} required /></label>
+                        <label>Pack Size<input name="pack_size" defaultValue={item.packSize} required /></label>
+                        <label>MRP Units<input name="mrp_units" type="number" min={0} step="0.01" defaultValue={item.mrpUnits} required /></label>
+                        <label>Cut Price<input name="cut_price" type="number" min={0} step="0.01" defaultValue={item.cutPrice} required /></label>
+                        <label>GST<input name="gst" defaultValue={item.gst} required /></label>
+                        <button type="submit" className="btn btn-primary admin-span-2"><Save size={16} /> Save Pathology Product</button>
+                      </form>
+                      <div className="admin-images-block">
+                        <h4>Pathology (Fully Auto) Images</h4>
+                        <AdminImageUploadForm entityId={item.id} target="meril" />
+                        <div className="admin-image-grid">
+                          {item.imageItems.length === 0 ? (
+                            <p className="muted">No images uploaded yet.</p>
+                          ) : (
+                            item.imageItems.map((image, index) => (
+                              <div key={image.id} className="admin-image-item">
+                                <img src={image.path} alt={`${item.productName} ${index + 1}`} />
+                                <form action="/admin/mutate" method="post">
+                                  <input type="hidden" name="op" value="delete-meril-image" />
+                                  <input type="hidden" name="image_id" value={image.id} />
+                                  <input type="hidden" name="image_path" value={image.path} />
+                                  <button type="submit" className="btn btn-secondary">Remove</button>
+                                </form>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {matchedMerilSemi.length > 0 ? (
+              <>
+                <h3 className="admin-search-group-title">Pathology – Semi Auto ({matchedMerilSemi.length})</h3>
+                <div className="admin-medicine-list">
+                  {matchedMerilSemi.map((item) => (
+                    <article key={item.id} className="info-card admin-medicine-card">
+                      <div className="admin-card-head">
+                        <h3>
+                          {item.productName} <span className="pill">SR: {item.srNo}</span>
+                          <span className="pill pill--semi">Semi-Auto</span>
+                        </h3>
+                        <form action="/admin/mutate" method="post">
+                          <input type="hidden" name="op" value="delete-meril-semi" />
+                          <input type="hidden" name="id" value={item.id} />
+                          <button type="submit" className="btn btn-secondary"><Trash2 size={16} /> Delete</button>
+                        </form>
+                      </div>
+                      <form action="/admin/mutate" method="post" className="admin-grid-form">
+                        <input type="hidden" name="op" value="update-meril-semi" />
+                        <input type="hidden" name="id" value={item.id} />
+                        <label>Sr. No<input name="sr_no" type="number" min={1} step={1} defaultValue={item.srNo} required /></label>
+                        <label>Category<input name="category" defaultValue={item.category} required /></label>
+                        <label className="admin-span-2">Product Name<input name="product_name" defaultValue={item.productName} required /></label>
+                        <label>Pack Size<input name="pack_size" defaultValue={item.packSize} required /></label>
+                        <label>MRP Units<input name="mrp_units" type="number" min={0} step="0.01" defaultValue={item.mrpUnits} required /></label>
+                        <label>Cut Price<input name="cut_price" type="number" min={0} step="0.01" defaultValue={item.cutPrice} required /></label>
+                        <label>GST<input name="gst" defaultValue={item.gst} required /></label>
+                        <button type="submit" className="btn btn-primary admin-span-2"><Save size={16} /> Save Semi-Auto Product</button>
+                      </form>
+                      <div className="admin-images-block">
+                        <h4>Pathology (Semi Auto) Images</h4>
+                        <AdminImageUploadForm entityId={item.id} target="meril-semi" />
+                        <div className="admin-image-grid">
+                          {item.imageItems.length === 0 ? (
+                            <p className="muted">No images uploaded yet.</p>
+                          ) : (
+                            item.imageItems.map((image, index) => (
+                              <div key={image.id} className="admin-image-item">
+                                <img src={image.path} alt={`${item.productName} ${index + 1}`} />
+                                <form action="/admin/mutate" method="post">
+                                  <input type="hidden" name="op" value="delete-meril-semi-image" />
+                                  <input type="hidden" name="image_id" value={image.id} />
+                                  <input type="hidden" name="image_path" value={image.path} />
+                                  <button type="submit" className="btn btn-secondary">Remove</button>
+                                </form>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {matchedDynamic.length > 0 ? (
+              <>
+                <h3 className="admin-search-group-title">Wound Dressing ({matchedDynamic.length})</h3>
+                <div className="admin-medicine-list">
+                  {matchedDynamic.map((item) => (
+                    <article key={item.id} className="info-card admin-medicine-card">
+                      <div className="admin-card-head">
+                        <h3>
+                          {item.productDescription} <span className="pill">Code: {item.itemCode}</span>
+                          <span className="pill pill--wound">Wound Dressing</span>
+                        </h3>
+                        <form action="/admin/mutate" method="post">
+                          <input type="hidden" name="op" value="delete-dynamic-techno" />
+                          <input type="hidden" name="id" value={item.id} />
+                          <button type="submit" className="btn btn-secondary"><Trash2 size={16} /> Delete</button>
+                        </form>
+                      </div>
+                      <form action="/admin/mutate" method="post" className="admin-grid-form">
+                        <input type="hidden" name="op" value="update-dynamic-techno" />
+                        <input type="hidden" name="id" value={item.id} />
+                        <label>Item Code<input name="item_code" defaultValue={item.itemCode} required /></label>
+                        <label>Brand Name<input name="brand_name" defaultValue={item.brandName} required /></label>
+                        <label className="admin-span-2">Product Description<input name="product_description" defaultValue={item.productDescription} required /></label>
+                        <label>Size<input name="size" defaultValue={item.size} required /></label>
+                        <label>UOM<input name="uom" defaultValue={item.uom} required /></label>
+                        <label>MRP<input name="mrp" type="number" min={0} step="0.01" defaultValue={item.mrp} required /></label>
+                        <label>Cut Price<input name="cut_price" type="number" min={0} step="0.01" defaultValue={item.cutPrice} required /></label>
+                        <button type="submit" className="btn btn-primary admin-span-2"><Save size={16} /> Save Wound Dressing Product</button>
+                      </form>
+                      <div className="admin-images-block">
+                        <h4>Wound Dressing Images</h4>
+                        <AdminImageUploadForm entityId={item.id} target="dynamic-techno" />
+                        <div className="admin-image-grid">
+                          {item.imageItems.length === 0 ? (
+                            <p className="muted">No images uploaded yet.</p>
+                          ) : (
+                            item.imageItems.map((image, index) => (
+                              <div key={image.id} className="admin-image-item">
+                                <img src={image.path} alt={`${item.productDescription} ${index + 1}`} />
+                                <form action="/admin/mutate" method="post">
+                                  <input type="hidden" name="op" value="delete-dynamic-techno-image" />
+                                  <input type="hidden" name="image_id" value={image.id} />
+                                  <input type="hidden" name="image_path" value={image.path} />
+                                  <button type="submit" className="btn btn-secondary">Remove</button>
+                                </form>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
+            ) : null}
+          </section>
+        );
+      })()}
 
       {(activeTab === "all" || activeTab === "hollister") && (<>
       <section className="info-card">

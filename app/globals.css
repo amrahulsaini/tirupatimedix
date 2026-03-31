@@ -1706,6 +1706,47 @@ textarea:focus {
 
 
 
+/* --- Admin Search Bar --- */
+.admin-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border: 1.5px solid var(--stroke);
+  border-radius: 14px;
+}
+
+.admin-search-bar svg {
+  color: var(--ink-soft);
+  flex-shrink: 0;
+}
+
+.admin-search-bar input {
+  flex: 1 1 280px;
+  min-height: 44px;
+  max-height: 44px;
+  padding-block: 0.6rem;
+  appearance: none;
+}
+
+.admin-search-results {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-search-group-title {
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.75rem;
+  background: linear-gradient(120deg, var(--surface-muted), var(--surface));
+  border-radius: 10px;
+  font-size: 1rem;
+  color: var(--brand);
+  border-left: 4px solid var(--brand);
+}
+
 /* --- Admin Section Divider --- */
 /* --- Admin Category Filter Tabs --- */
 .admin-category-tabs {
